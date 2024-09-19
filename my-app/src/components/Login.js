@@ -3,19 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { UserContext } from "../UserContext";
 import api from '../api';
- 
+
 const Login = () => {
-   
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPopup, setShowPopup] = useState(false);
-    const [isAgent, setIsAgent] = useState(false);
-    const [isManager, setIsManager] = useState(false);
-    const { user, setUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
     setUser(null);
     sessionStorage.clear();
- 
+
     const [signupData, setSignupData] = useState({
         fullName: '',
         signupEmail: '',
@@ -26,41 +24,36 @@ const Login = () => {
         country: '',
         role: 'customer'
     });
- 
+
     const navigate = useNavigate();
- 
+
     const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
- 
-    const handleLogin = async (e) => {
+
+    const handleCustomerLogin = async (e) => {
         e.preventDefault();
         try {
             if (!validateEmail(email)) {
                 alert('Please enter a valid email address.');
                 return;
             }
-    
+
             const { data } = await api.post('/auth/login', { email, password });
-    
+
             console.log(data.user, data.token);
             sessionStorage.setItem('token', data.token);
             setUser(data.user);
-    
-            if (isManager && data.user.role === 'manager') {
-                navigate('/managerDashboard');
-            } else if (isAgent && data.user.role === 'agent') {
-                navigate('/dashboardAgent');
-            } else if (!isAgent && data.user.role === 'customer') {
+
+            if (data.user.role === 'customer') {
                 navigate('/dashboard');
             } else {
-                alert("Auth Login Error");
+                alert("Login role mismatch or invalid credentials.");
             }
         } catch (e) {
             console.log(e);
-            alert("Login Failed");
+            alert("Customer Login Failed");
         }
     };
-    
- 
+
     const handleSignUp = async (e) => {
         e.preventDefault();
        
@@ -122,7 +115,12 @@ const Login = () => {
             alert("Something went wrong");
         }
     };
- 
+
+    const handleEmployeeRedirect = () => {
+        // Redirect to employee login page
+        navigate('/employeeLogin');
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setSignupData({
@@ -130,67 +128,59 @@ const Login = () => {
             [name]: value
         });
     };
- 
+
     return (
         <div className="login-container">
-            <div className="side-panel">
+            <div className="company-details">
                 <h1>Welcome to TelecomCo</h1>
-                <p className="subtitle">We're holding the door for you! Login now and manage all your TelecomCo services with ease.</p>
+                <p>Manage all your TelecomCo services with ease.</p>
             </div>
-            <form className="login-form" onSubmit={handleLogin}>
-                <h2>Login to TelecomCo</h2>
- 
-                {errorMessage && <p className="error-message">{errorMessage}</p>}
- 
-                <div className="input-group">
-                    <label htmlFor="email">Email Address</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+
+            <div className="login-boxes">
+                {/* Left box: Customer Login and Signup */}
+                <div className="box left-box">
+                    <h2>Customer Login</h2>
+                    <form onSubmit={handleCustomerLogin}>
+                        <div className="input-group">
+                            <label htmlFor="email">Email Address</label>
+                            <input
+                                type="email"
+                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label htmlFor="password">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <button type="submit" className="login-button">Login</button>
+                    </form>
+                    <p className="forgot-password">
+                        <a href="#forgot-password">Forgot Password?</a>
+                    </p>
+                    <div className="sign-up-link">
+                        <a href="#signup" onClick={() => setShowPopup(true)}>Sign Up</a>
+                    </div>
                 </div>
-                <div className="input-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
+
+                {/* Right box: Employee Login */}
+                <div className="box right-box">
+                    <h2>Employee Login</h2>
+                    <button onClick={handleEmployeeRedirect} className="login-button">
+                        Go to Employee Login
+                    </button>
                 </div>
- 
-                <div className="input-group-inline">
-                    <input
-                        type="checkbox"
-                        checked={isAgent}
-                        onChange={() => setIsAgent(!isAgent)}
-                    />
-                    <label>I am an agent</label>
-                </div>
-                <div className="input-group-inline">
-                    <input
-                        type="checkbox"
-                        checked={isManager}
-                        onChange={() => setIsManager(!isManager)}
-                    />
-                    <label>I am a manager</label>
-                </div>
- 
-                <button type="submit" className="login-button">Login</button>
- 
-                <p className="forgot-password">
-                    <a href="#forgot-password">Forgot Password?</a>
-                </p>
- 
-                <div className="sign-up-link">
-                    <a href="#signup" onClick={() => setShowPopup(true)}>Sign Up</a>
-                </div>
-            </form>
- 
+            </div>
+
+            {/* Pop-up for sign up */}
             {showPopup && (
                 <>
                     <div className="overlay" onClick={() => setShowPopup(false)}></div>
@@ -287,5 +277,5 @@ const Login = () => {
         </div>
     );
 };
- 
+
 export default Login;

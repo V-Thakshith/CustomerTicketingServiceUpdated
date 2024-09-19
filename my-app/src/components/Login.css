@@ -1,3 +1,4 @@
+/* Global Styles */
 body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
@@ -6,58 +7,110 @@ body {
 
 .login-container {
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
-    position: relative;
-    margin-right: 150px;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    animation: fadeIn 1s ease;
 }
 
-.side-panel {
-    background-color: #007bff;
-    position: absolute;
-    left: 0;
-    width: 50%;
-    height: 100%;
-    z-index: -1;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.company-details {
+    text-align: center;
+    margin-bottom: 30px;
+    animation: slideIn 1s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.company-details h1 {
+    font-family: 'Montserrat', sans-serif;
+    color: #007bff;
+    font-size: 3rem;
+    animation: popIn 0.8s ease;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.company-details p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+/* Box Container */
+.login-boxes {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 20px;
+}
+
+.box {
+    flex: 1;
+    padding: 40px;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    padding: 20px;
-    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.side-panel h1 {
+.box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.left-box, .right-box {
+    max-width: 500px;
+}
+
+h2 {
+    font-size: 1.75rem;
     font-family: 'Montserrat', sans-serif;
-    margin: 0;
-    font-size: 3rem;
-    text-align: center;
-}
-
-.side-panel p.subtitle {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 1.25rem;
-    text-align: center;
-    max-width: 80%;
-    margin-top: 15px;
-}
-
-.login-form {
-    background-color: white;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    width: 300px;
-    text-align: center;
-}
-
-.login-form h2 {
-    margin-bottom: 20px;
     color: #007bff;
-    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 20px;
+    text-align: center;
+    transition: color 0.3s ease;
 }
 
+h2:hover {
+    color: #0056b3;
+}
+
+/* Input Group */
 .input-group {
     margin-bottom: 15px;
     text-align: left;
@@ -77,8 +130,15 @@ body {
     border-radius: 4px;
     box-sizing: border-box;
     font-family: 'Open Sans', sans-serif;
+    transition: border 0.3s ease;
 }
 
+.input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Buttons */
 .login-button {
     background-color: #007bff;
     color: white;
@@ -89,40 +149,31 @@ body {
     width: 100%;
     font-family: 'Open Sans', sans-serif;
     font-size: 1rem;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
 }
 
 .login-button:hover {
     background-color: #0056b3;
 }
 
-.sign-up-link {
+/* Sign Up and Forgot Password Links */
+.sign-up-link, .forgot-password {
+    text-align: center;
     margin-top: 15px;
 }
 
-.sign-up-link a {
+.sign-up-link a, .forgot-password a {
     color: #007bff;
     text-decoration: none;
     font-size: 14px;
 }
 
-.sign-up-link a:hover {
+.sign-up-link a:hover, .forgot-password a:hover {
     text-decoration: underline;
 }
 
-.forgot-password {
-    margin-top: 15px;
-}
-
-.forgot-password a {
-    color: #007bff;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.forgot-password a:hover {
-    text-decoration: underline;
-}
-
+/* Popup */
 .popup {
     position: fixed;
     top: 50%;
@@ -135,6 +186,21 @@ body {
     z-index: 10;
     width: 400px;
     text-align: center;
+    max-height: 90vh;
+    overflow-y: auto; /* Add scroll functionality */
+}
+
+.popup::-webkit-scrollbar {
+    width: 8px;
+}
+
+.popup::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.popup::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
 }
 
 .popup h2 {
@@ -143,24 +209,8 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
-.popup .input-group {
-    margin-bottom: 15px;
-}
-
-.popup .input-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #333;
-    font-family: 'Open Sans', sans-serif;
-}
-
 .popup .input-group input {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-family: 'Open Sans', sans-serif;
 }
 
 .popup .register-button {
@@ -173,6 +223,7 @@ body {
     width: 100%;
     font-family: 'Open Sans', sans-serif;
     font-size: 1rem;
+    transition: background-color 0.3s ease;
 }
 
 .popup .register-button:hover {
@@ -194,7 +245,7 @@ body {
     color: #ff4d4d;
 }
 
-
+/* Overlay */
 .overlay {
     position: fixed;
     top: 0;
@@ -205,18 +256,32 @@ body {
     z-index: 5;
 }
 
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-boxes {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .box {
+        width: 100%;
+        max-width: 90%;
+        margin: 10px 0;
+    }
+}
+
 @media (max-width: 480px) {
+    .company-details h1 {
+        font-size: 2.5rem;
+    }
+
     .login-container {
         justify-content: center;
         padding-right: 0;
     }
 
-    .side-panel {
-        display: none;
-    }
-
-    .login-form {
-        width: 90%;
+    .login-boxes {
+        flex-direction: column;
     }
 
     .popup {

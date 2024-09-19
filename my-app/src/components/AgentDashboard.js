@@ -5,7 +5,7 @@ import api from "../api"; // Ensure this is correctly configured for your API
 import { UserContext } from "../UserContext";
 import TicketModal from "./TicketModal";
 import TicketChart from "./TicketChart";
-
+ 
 const AgentDashboard = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -14,10 +14,10 @@ const AgentDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTicket, setSelectedTicket] = useState(null); // New state for selected ticket
   const [showModal, setShowModal] = useState(false); // State to control the modal
-
+ 
   const { user, ready } = useContext(UserContext); // Use user from UserContext
   const navigate = useNavigate();
-
+ 
   const categoryOrder = {
     Technical: 1,
     Billing: 2,
@@ -25,19 +25,19 @@ const AgentDashboard = () => {
     Product: 4,
     All: 5,
   };
-
+ 
   const categories = ["All", "Technical", "Billing", "General", "Product"];
-
+ 
   useEffect(() => {
     if (!ready) return;
     if (!user) {
       navigate("/");
       return;
     }
-
+ 
     fetchTickets();
   }, [user, ready, navigate]);
-
+ 
   const fetchTickets = async () => {
     setLoading(true);
     try {
@@ -45,8 +45,7 @@ const AgentDashboard = () => {
       const sortedTickets = response.data.sort((a, b) => {
         if (a.category === b.category) return 0;
         return (
-          (categoryOrder[a.category] || 999) -
-          (categoryOrder[b.category] || 999)
+          (categoryOrder[a.category] || 999) - (categoryOrder[b.category] || 999)
         );
       });
       setTickets(sortedTickets);
@@ -57,36 +56,38 @@ const AgentDashboard = () => {
       setLoading(false);
     }
   };
-
+ 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
   };
-
+ 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-
+ 
   const handleViewTicket = (ticket) => {
     setSelectedTicket(ticket);
     setShowModal(true);
   };
-
+ 
   const handleCloseModal = () => {
     window.location.reload();
     fetchTickets();
     setShowModal(false);
     setSelectedTicket(null);
   };
-
+ 
   const handleTicketAction = (action) => {
     handleCloseModal(); // Close the modal after action
   };
-
+ 
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/");
   };
-
+ 
+  const resolvedTickets = tickets.filter(ticket => ticket.status === 'Resolved');
+ 
   const filteredTickets = tickets.filter((ticket) => {
     const matchesCategory =
       selectedCategory === "All" || ticket.category === selectedCategory;
@@ -95,88 +96,43 @@ const AgentDashboard = () => {
       ticket.customer.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
-
+ 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
-
+ 
   return (
     <div className="dashboard-container">
       <nav className="sidebar">
         <div className="sidebar-sticky">
           <ul className="nav-list">
             <li className="nav-item">
-              <a className="nav-link" href="#my-tickets">
-                My Tickets
-              </a>
+              <a className="nav-link" href="#my-tickets">My Tickets</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#all-tickets">
-                All Tickets
-              </a>
+              <a className="nav-link" href="#all-tickets">All Tickets</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#customers">
-                Customers
-              </a>
+              <a className="nav-link" href="#customers">Customers</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#reports">
-                Reports
-              </a>
+              <a className="nav-link" href="#reports">Reports</a>
             </li>
           </ul>
         </div>
       </nav>
-
+ 
       <main className="main-content">
         <div className="header">
-          <h4>Agent Home Page</h4>
-          <button className="logout-button" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-
-        {user && (
-          <div className="agent-stats">
-            <h1>Agent: {user.name}</h1>
-            <div id="ticket-count" className="card">
-              <div className="card-header">
-                <h5>Total Tickets:</h5>
-              </div>
-              <div className="card-body">
-                <p> {user.ticketCount}</p>
-              </div>
-            </div>
-
-            <div id="ticket-count" className="card">
-              <div className="card-header">
-                <h5>Open Tickets:</h5>
-              </div>
-              <div className="card-body">
-                <p> {user.ticketOpen}</p>
-              </div>
-            </div>
-
-            <div id="ticket-count" className="card">
-              <div className="card-header">
-                <h5>In Progress Tickets:</h5>
-              </div>
-              <div className="card-body">
-                <p> {user.ticketInProgress}</p>
-              </div>
-            </div>
-
-            <div id="ticket-count" className="card">
-              <div className="card-header">
-                <h5>Resolved Tickets:</h5>
-              </div>
-              <div className="card-body">
-                <p> {user.ticketResolved}</p>
-              </div>
-            </div>
+          <div className="header-left">
+            <h2>Welcome, {user.name}</h2>
           </div>
-        )}
-
+          <div className="header-right">
+            <button className="logout-button" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+        </div>
+       
         {/* Search Bar */}
         <div className="search-bar-container">
           <input
@@ -188,7 +144,8 @@ const AgentDashboard = () => {
           />
           <button className="search-button">Search</button>
         </div>
-
+        <br></br>
+ 
         {/* Category Dropdown */}
         <div className="dropdown-container">
           <label htmlFor="category-select">Filter by Category:</label>
@@ -205,12 +162,14 @@ const AgentDashboard = () => {
             ))}
           </select>
         </div>
-
+        <br></br>
+ 
         {/* All Tickets Section */}
         <div id="all-tickets" className="card">
           <div className="card-header">
             <h5>All Tickets</h5>
           </div>
+          <br></br>
           <div className="table-container">
             <table className="table">
               <thead>
@@ -233,14 +192,9 @@ const AgentDashboard = () => {
                       <td>{ticket.title}</td>
                       <td>{ticket.category}</td>
                       <td>{ticket.status}</td>
+                      <td>{new Date(ticket.createdAt).toLocaleDateString("en-US")}</td>
                       <td>
-                        {new Date(ticket.createdAt).toLocaleDateString("en-US")}
-                      </td>
-                      <td>
-                        <button
-                          className="view-link"
-                          onClick={() => handleViewTicket(ticket)}
-                        >
+                        <button className="view-link" onClick={() => handleViewTicket(ticket)}>
                           View
                         </button>
                       </td>
@@ -255,26 +209,68 @@ const AgentDashboard = () => {
             </table>
           </div>
         </div>
-
+ 
+        <div id="reports" className="card">
+              <div className="card-header">
+                <h5>Resolved Tickets</h5>
+              </div>
+              <br />
+              <div className="table-container">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Ticket Number</th>
+                      <th>Customer Name</th>
+                      <th>Subject</th>
+                      <th>Category</th>
+                      <th>Date Resolved</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {resolvedTickets.length > 0 ? (
+                      resolvedTickets.map(ticket => (
+                        <tr key={ticket._id}>
+                          <td>{ticket._id}</td>
+                          <td>{ticket.customer.name}</td>
+                          <td>{ticket.title}</td>
+                          <td>{ticket.category}</td>
+                          <td>{new Date().toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="5">No resolved tickets</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+ 
+       
+ 
         {/* Reports Section */}
         <div id="reports" className="card">
           <div className="card-header">
             <h5>Reports</h5>
           </div>
           <div className="card-body">
-          {user && (
-  <TicketChart 
-    ticketCount={user.ticketCount} 
-    ticketResolved={user.ticketResolved} 
-    ticketInProgress={user.ticketInProgress} 
-    ticketOpen={user.ticketOpen} 
-    agentId={user._id}
-  />
-)}
-
+            {user && (
+              <TicketChart
+                ticketCount={user.ticketCount}
+                ticketResolved={user.ticketResolved}
+                ticketInProgress={user.ticketInProgress}
+                ticketOpen={user.ticketOpen}
+                agentId={user._id}
+              />
+            )}
           </div>
         </div>
-
+ 
         {showModal && (
           <TicketModal
             ticket={selectedTicket}
@@ -286,5 +282,7 @@ const AgentDashboard = () => {
     </div>
   );
 };
-
+ 
 export default AgentDashboard;
+ 
+ 
