@@ -8,14 +8,48 @@ const { JWT_SECRET } = require('../config/jwtConfig');
 
 // Register Customer
 exports.registerCustomer = async (req, res) => {
-  const { fullName,signupEmail, signupPassword,dob,country,gender } = req.body;
+  const { fullName, signupEmail, signupPassword, dob, country, gender } = req.body;
+
   try {
+    // Validate required fields
+    if (!fullName || !signupEmail || !signupPassword || !dob || !country || !gender) {
+      return res.status(400).json({ msg: 'Please fill all required fields' });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: signupEmail });
+    if (existingUser) {
+      return res.status(400).json({ msg: 'Email is already registered' });
+    }
+
+    // Hash the password
     const hashedPassword = await bcrypt.hash(signupPassword, 10);
-    const customer = new Customer({ name:fullName, email:signupEmail, password: hashedPassword, gender, dob, country });
-    await customer.save();
-    res.status(201).json({ msg: 'Customer registered successfully' });
+
+    // Create the new user
+    const customer = new User({ 
+      name: fullName, 
+      email: signupEmail, 
+      password: hashedPassword, 
+      gender, 
+      dob, 
+      country 
+    });
+
+    // Save the user in the database
+    const newUser = await customer.save();
+    console.log(newUser)
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: newUser._id, role: newUser.role },
+      process.env.JWT_SECRET
+    );
+
+    // Send response
+    res.status(201).json({ token, user: newUser });
+
   } catch (error) {
-    res.status(500).json({ msg: 'Server error', error });
+    console.error('Error registering customer:', error);
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 };
 
@@ -65,7 +99,7 @@ exports.loginUser = async (req, res) => {
       process.env.JWT_SECRET
     );
     console.log(token,user)
-    res.cookie('token',token).json({token,user})
+    res.json({token,user})
   } catch (error) {
     res.status(500).json({ msg: 'Server error', error });
   }
