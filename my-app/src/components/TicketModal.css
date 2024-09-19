@@ -1,0 +1,105 @@
+/* Styles for the modal overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Dark background for overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  /* Styles for the modal content */
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 500px; /* Fixed width */
+    max-width: 90%; /* Responsive max width */
+    max-height: 80vh; /* Maximum height of the modal */
+    overflow: hidden; /* Hide any overflow */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Styles for the modal header */
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd; /* Optional: Adds a border between header and body */
+    padding-bottom: 10px;
+  }
+  
+  /* Styles for the modal body */
+  .modal-body {
+    margin: 20px 0;
+    flex: 1; /* Allows the body to expand and fill available space */
+    overflow-y: auto; /* Adds vertical scrolling if content exceeds available space */
+  }
+  
+  /* Styles for the modal footer */
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center; /* Center align the button and select dropdown */
+    border-top: 1px solid #ddd; /* Optional: Adds a border between body and footer */
+    padding-top: 10px;
+  }
+  
+  /* Styles for action buttons */
+  .action-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 10px; /* Space between buttons */
+  }
+  
+  /* Styles for the status select dropdown */
+  .status-select {
+    margin-left: 10px; /* Space between button and select dropdown */
+  }
+  
+  /* Styles for the close button */
+  .close-button {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  /* Styles for attachment items */
+  .attachments-section {
+    margin-top: 20px; /* Add spacing above the attachments section */
+  }
+  
+  .attachments-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Space between attachment items */
+  }
+  
+  /* Define the fixed-size box for attachment items */
+  .attachment-item {
+    width: 200px; /* Adjust the width as needed */
+    height: 200px; /* Adjust the height as needed */
+    overflow: hidden; /* Hide any overflow */
+    position: relative; /* Position for better control */
+    margin: 10px; /* Add some spacing between items */
+  }
+  
+  /* Style for the images inside attachment items */
+  .attachment-image {
+    width: 100%; /* Make the image fill the container */
+    height: 100%; /* Make the image fill the container */
+    object-fit: cover; /* Cover the container while preserving aspect ratio */
+    display: block; /* Remove any inline spacing */
+  }
+  

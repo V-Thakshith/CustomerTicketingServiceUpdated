@@ -1,0 +1,160 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f4f8;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+  display: flex;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 16.666%;
+  background-color: #007bff;
+  color: white;
+  height: 100vh;
+  position: fixed;
+  padding-top: 20px;
+  margin-top: 50px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+}
+
+.nav-item {
+  margin-bottom: 10px;
+}
+
+.nav-item a {
+  text-decoration: none;
+  color: white;
+  display: block;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.nav-item a:hover {
+  background-color: #64adfb;
+}
+
+/* Main content styles */
+.main-content {
+  margin-left: 16.666%;
+  margin-top: 50px; /* Adjust to ensure it starts below the fixed header */
+  padding: 20px; /* Increased padding for better spacing */
+  width: 83.333%;
+  background-color: #f0f4f8;
+  box-sizing: border-box;
+}
+
+/* Header styles */
+.header {
+  display: flex;
+  justify-content: center; /* Center the heading */
+  align-items: center;
+  background-color: #007bff;
+  color: white;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  border-bottom: 2px solid #007bff;
+  box-shadow: 0px 4px 2px -2px rgb(252, 251, 251);
+}
+
+.header h2 {
+  margin: 0;
+  font-weight: bold;
+  text-align: center; /* Center the heading text */
+  flex-grow: 1; /* Allow header to use available space */
+}
+
+.logout-button {
+  padding: 5px 30px;
+  border: none;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  
+  position: absolute; /* Or fixed if you want it to stay in the same place on scroll */
+  top: 10px; /* Adjust the distance from the top */
+  right: 50px; /* Adjust the distance from the right edge */
+}
+
+
+.logout-button:hover {
+  background-color: darkred; /* Darker shade for hover effect */
+}
+
+/* Table styles */
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+.table th,
+.table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.table th {
+  background-color: #007bff;
+  color: white;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f4faff; /* Light blue background for even rows */
+}
+tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* White background for odd rows */
+}
+
+.table tr:hover {
+  background-color: #e0e7ff;
+}
+
+/* Card styles */
+.card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+  margin-bottom: 30px; /* Adds space between the tables */
+}
+
+.card-header {
+  text-align: left; /* Aligns the text to the left side */
+  font-weight: bold;
+  padding-left: 0; /* Removes default padding to align perfectly with the left edge */
+}
+
+.card h5 {
+  margin-bottom: 40px;
+  text-align: left;
+  margin: 0;
+  color: #080808;
+}
+
+.card p {
+  color: #555;
+}
