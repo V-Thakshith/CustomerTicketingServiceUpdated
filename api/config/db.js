@@ -39,8 +39,6 @@ const connectDB = async () => {
       country: "India"
     });
 
-    
-
     // Save Manager and handle duplicate key errors
     try {
       await DefaultManager.save();
@@ -53,48 +51,30 @@ const connectDB = async () => {
     }
 
     // Save Agent and handle duplicate key errors
-    let defaultAgent
-    let defaultCustomer
+    let defaultAgent;
     try {
-      defaultAgent=await DefaultAgent.save();
+      defaultAgent = await DefaultAgent.save();
     } catch (err) {
       if (err.code === 11000) {
         console.log('Agent with this email already exists');
+        // Fetch the existing agent if it already exists
+        defaultAgent = await Agent.findOne({ email: "salaj.saxena@team.telstra.com" });
       } else {
         console.error('Error creating Agent:', err);
       }
     }
 
     // Save Customer and handle duplicate key errors
+    let defaultCustomer;
     try {
-      defaultCustomer=await DefaultCustomer.save();
+      defaultCustomer = await DefaultCustomer.save();
     } catch (err) {
       if (err.code === 11000) {
         console.log('Customer with this email already exists');
+        // Fetch the existing customer if it already exists
+        defaultCustomer = await Customer.findOne({ email: "vaishnavib.goudar@team.telstra.com" });
       } else {
         console.error('Error creating Customer:', err);
-      }
-    }
-
-    const DefaultTicket = new Ticket({
-      title:"Issue with the Internet",
-      description:"Cant connect to the Internet from morning, I have restarted many times",
-      status: 'Open',
-      attachments:'',
-      customer: defaultCustomer._id,
-      createdAt: new Date(),
-      updatedAt: new Date(),  // Set `updatedAt` to current date
-      category: 'Technical', // Default to 'General' if category is missing
-      assignedTo: defaultAgent._id
-    });
-
-    try {
-      defaultTicket=await DefaultTicket.save();
-    } catch (err) {
-      if (err.code === 11000) {
-        console.log('DefaultTicket with this id already exists');
-      } else {
-        console.error('Error creating DefaultTicket:', err);
       }
     }
 
