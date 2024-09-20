@@ -1,0 +1,62 @@
+.header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+    gap: 40px;
+}
+
+/* Full page container */
+.landing-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #fff; /* White background */
+}
+
+/* Image styling */
+.landing-image {
+    width: 50%; /* Adjust the width as needed */
+    height: auto;
+    display: block;
+}
+
+/* Content wrapper (card) */
+.landing-content {
+    width: 35%; /* Adjust based on your design */
+    height: auto;
+    text-align: center;
+    background: #007bff; /* Blue background */
+    padding: 5%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    color: #fff; /* White text for contrast */
+}
+
+/* Other styles remain the same */
+
+/* Button styling */
+.landing-button {
+    background-color: #fff;
+    color: #007bff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    margin: 0 15px;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.landing-button:hover {
+    background-color: #e0e0e0;
+    color: #0056b3;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

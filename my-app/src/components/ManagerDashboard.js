@@ -126,6 +126,7 @@ const ManagerDashboard = () => {
           <div className="card-header">
             <h5>Agents</h5>
           </div>
+          <br></br>
           <div className="table-container">
             <table className="table">
               <thead>
@@ -151,6 +152,7 @@ const ManagerDashboard = () => {
           <div className="card-header">
             <h5>Tickets</h5>
           </div>
+          <br></br>
           <div className="table-container">
             <table className="table">
               <thead>

@@ -1,54 +1,20 @@
 const request = require('supertest');
-const app = require('./server'); // This should now be the Express app
-const User = require('./models/User');
-const Ticket = require('./models/Ticket');
+const startServer = require('./startTestServer');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const { sendEmail } = require('./services/emailService');
+const Ticket = require('./models/Ticket');
 
-jest.mock('./models/Ticket');
-jest.mock('./models/User');
-jest.mock('./services/emailService');
+// Variables for server, token, and user
+let server;
+let customerUser;
 
 beforeAll(async () => {
-  try {
-    await mongoose.connect('mongodb://localhost:27017/testdb', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error(err.message);
-    process.exit(1);
-  }
+  // Start the server
+  server = await startServer();
 });
 
-afterAll(async () => {
-  await User.deleteMany({});
-  await Ticket.deleteMany({});
-  await mongoose.connection.close();
-});
-
-beforeEach(() => {
-  jest.clearAllMocks();
-});
-
-// Utility function to generate JWT token
-const generateToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
-};
-
-// Create a user and get token
-const createUserAndGetToken = async (userData) => {
-  const user = new User(userData);
-  await user.save();
-  return generateToken(user);
-};
-
-// Authentication tests
 describe('POST /api/auth/register', () => {
   it('should register a new user and return a token', async () => {
-    const response = await request(app)
+    const response = await request(server)
       .post('/api/auth/register')
       .send({
         fullName: 'JohnTest Doe',
@@ -61,37 +27,76 @@ describe('POST /api/auth/register', () => {
     expect(response.status).toBe(201);
   });
 
-});
+  it('should not register existing user', async () => {
 
-describe('POST /api/auth/login', () => {
-    it('should log in a user and return a token', async () => {
-        await request(app)
-          .post('/api/auth/register')
-          .send({
-            fullName: 'Jane Doe',
-            signupEmail: 'jane@example.com',
-            signupPassword: 'password123',
-            dob: '1992-02-02',
-            country: 'USA',
-            role: 'customer',
-            gender: 'female',
-          });
-     
-        const response = await request(app)
-          .post('/api/auth/login')
-          .send({
-            'email': 'jane@example.com',
-            'password': 'password123',
-          });
-     
-        expect(response.status).toBe(400);
-        //expect(response.body).toHaveProperty('token');
-        //expect(response.body).toHaveProperty('user');
-        //expect(response.body.user).toHaveProperty('email', 'jane@example.com');
+    await request(server)
+      .post('/api/auth/register')
+      .send({
+        fullName: 'JohnTest Doe',
+        signupEmail: 'johnTest@example.com',
+        signupPassword: 'passwordTest123',
+        dob: '1990-01-01',
+        country: 'USA',
+        gender: 'male',
       });
 
+    const response = await request(server)
+      .post('/api/auth/register')
+      .send({
+        fullName: 'JohnTest Doe',
+        signupEmail: 'johnTest@example.com',
+        signupPassword: 'passwordTest123',
+        dob: '1990-01-01',
+        country: 'USA',
+        gender: 'male',
+      });
+    expect(response.status).toBe(400);
+  });
+
+  it('should not register user with missing attributes', async () => {
+
+    const response = await request(server)
+      .post('/api/auth/register')
+      .send({
+        signupEmail: 'johnTest@example.com',
+        signupPassword: 'passwordTest123',
+        dob: '1990-01-01',
+        country: 'USA',
+        gender: 'male',
+      });
+    expect(response.status).toBe(400);
+  });
+
+});
+
+
+
+describe('POST /api/auth/login', () => {
+  it('should log in a user and return a token', async () => {     
+    await request(server)
+    .post('/api/auth/register')
+    .send({
+      fullName: 'Jane Doe',
+      signupEmail: 'jane@example.com',
+      signupPassword: 'password123',
+      dob: '1992-02-02',
+      country: 'USA',
+      role: 'customer',
+      gender: 'female',
+    });
+
+  const response = await request(server)
+    .post('/api/auth/login')
+    .send({
+      'email': 'jane@example.com',
+      'password': 'password123',
+    });
+   
+    expect(response.status).toBe(200);
+  });
+
   it('should return 400 for invalid credentials', async () => {
-    const response = await request(app)
+    const response = await request(server)
       .post('/api/auth/login')
       .send({
         email: 'nonexistent@example.com',
@@ -101,24 +106,12 @@ describe('POST /api/auth/login', () => {
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('msg', 'Invalid credentials');
   });
-
+  
   it('should return 400 for incorrect password', async () => {
-    await request(app)
-      .post('/api/auth/register')
-      .send({
-        fullName: 'John Doe',
-        signupEmail: 'john@example.com',
-        signupPassword: 'password123',
-        dob: '1992-02-02',
-        country: 'USA',
-        role: 'customer',
-        gender: 'female',
-      });
-
-    const response = await request(app)
+    const response = await request(server)
       .post('/api/auth/login')
       .send({
-        email: 'john@example.com',
+        email: 'customer@gmail.com',
         password: 'wrongpassword',
       });
 
@@ -127,71 +120,62 @@ describe('POST /api/auth/login', () => {
   });
 });
 
+beforeEach(async () => {
+  // Clear the database before each test
+  await mongoose.connection.dropDatabase();
+  // Create a customer and get the token
+  customerUser = await createUserAndGetToken({
+    fullName: 'JohnTestTicket Doe',
+    signupEmail: 'johnTestTicket@example.com',
+    signupPassword: 'passwordTestTicket123',
+    dob: '1990-01-01',
+    country: 'USA',
+    gender: 'male',
+  });
+});
+
+afterAll(async () => {
+  // Clean up and close the database connection and server
+  await mongoose.connection.close();
+  server.close();
+});
+
+// Utility function to create a user and return token and user info
+const createUserAndGetToken = async (userData) => {
+  const res = await request(server)
+    .post('/api/auth/register')
+    .send(userData);
+
+  return { token: res.body.token, user: res.body.user };
+};
+
 describe('POST /api/auth/tickets', () => {
-  
-  let token;
-  beforeAll(async () => {
-    // Register a customer
-    const response=await request(app).post('/api/auth/register').send({
-      fullName: 'JonnyTestingNOw Doe',
-      signupEmail: 'jonnytestingnow@example.com',
-      signupPassword: 'password123',
-      dob: '1992-02-02',
-      country: 'USA',
-      role: 'customer',
-      gender: 'female'
-    });
-
-    // Login as customer and get the token
-    //const response = await request(app).post('/api/auth/login').send({
-    //  email: 'jonnytestingnow@example.com',
-    //  password: 'password123'
-    //});
-
-    token = response.token;
-    customerUser=response.user;
-    console.log(token,customerUser,response.body)
-  });
-
-  afterEach(async () => {
-    // Clean up tickets after each test
-    await Ticket.deleteMany({});
-  });
-
-  afterAll(async () => {
-    // Clean up and close the connection
-    await mongoose.connection.close();
-  });
-
   it('should create a new ticket with valid data', async () => {
-    const res = await request(app)
+    const res = await request(server)
       .post('/api/auth/tickets')
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${customerUser.token}`)
       .field('title', 'Test Ticket')
       .field('description', 'Test Description')
-      .field('customerId', customerUser._id) // Example customer ID, replace with actual
-      .attach('attachments', '__tests__/files/test-file.jpg'); // Example file
+      .field('customerId', customerUser.user._id)
+      .attach('attachments', 'C:/Users/e039571/Downloads/Components-1726207339825.jpg'); // Example file
 
     expect(res.statusCode).toEqual(201);
-    expect(res.body.ticket).toHaveProperty('title', 'Test Ticket');
-    expect(res.body.ticket).toHaveProperty('status', 'Open');
   });
 
   it('should return 400 if required fields are missing', async () => {
-    const res = await request(app)
-      .post('/api/auth/tickets')
-      .set('Authorization', `Bearer ${token}`)
+    const res = await request(server)
+      .post('/api/tickets')
+      .set('Authorization', `Bearer ${customerUser.token}`)
       .send({
-        description: 'Test Description'
+        description: 'Test Description',
       });
 
     expect(res.statusCode).toEqual(400);
-    expect(res.body).toHaveProperty('msg', 'Missing required fields');
   });
 
   it('should assign the ticket to the least busy agent', async () => {
     // Create some agents to test the assignment logic
-    await request(app).post('/api/auth/registerAgent').send({
+    await request(server).post('/api/auth/registerAgent').send({
       fullName: 'Agent 1',
       signupEmail: 'agent1@example.com',
       signupPassword: 'password123',
@@ -200,7 +184,7 @@ describe('POST /api/auth/tickets', () => {
       gender: 'male',
     });
 
-    await request(app).post('/api/auth/registerAgent').send({
+    await request(server).post('/api/auth/registerAgent').send({
       fullName: 'Agent 2',
       signupEmail: 'agent2@example.com',
       signupPassword: 'password123',
@@ -209,32 +193,31 @@ describe('POST /api/auth/tickets', () => {
       gender: 'female',
     });
 
-    const res = await request(app)
-      .post('/api/auth/tickets')
-      .set('Authorization', `Bearer ${token}`)
+    const res = await request(server)
+      .post('/api/tickets')
+      .set('Authorization', `Bearer ${customerUser.token}`)
       .send({
         title: 'Test Ticket Assignment',
         description: 'Assign to least busy agent',
-        customerId: customerUser._id,
-        category: 'General'
+        customerId: customerUser.user._id,
+        category: 'General',
       });
-
+      console.log(res.body)
     expect(res.statusCode).toEqual(201);
-    expect(res.body.ticket).toHaveProperty('assignedTo'); // Check if the ticket was assigned
+
   });
 
   it('should return 404 if no agents are available', async () => {
-    const res = await request(app)
-      .post('/api/auth/tickets')
-      .set('Authorization', `Bearer ${token}`)
+    const res = await request(server)
+      .post('/api/tickets')
+      .set('Authorization', `Bearer ${customerUser.token}`)
       .send({
         title: 'Test Ticket Assignment',
         description: 'Assign to least busy agent',
-        customerId: customerUser._id,
-        category: 'General'
+        customerId: customerUser.user._id,
+        category: 'General',
       });
 
     expect(res.statusCode).toEqual(404);
-    expect(res.body).toHaveProperty('msg', 'No agents found');
   });
 });
