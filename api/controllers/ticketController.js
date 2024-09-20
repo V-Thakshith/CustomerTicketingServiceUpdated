@@ -213,31 +213,29 @@ exports.getAssignedTickets = async (req, res) => {
 exports.createTicket = async (req, res) => {
   try {
     const { title, description, customerId, category } = req.body;
+    
+    // Handle attachments, if any
     const attachments = req.files ? req.files.map(file => file.path.replace('uploads/', '')) : [];
 
-    // Validate input
-    if (!title || !description) {
+    // Validate input: Check if required fields are missing
+    if (!title || !description || !customerId) {
       return res.status(400).json({ msg: 'Missing required fields' });
     }
 
+    // Create the ticket with basic details
     const now = new Date(); 
-    const readableDate = now.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-    console.log(readableDate);
+    
 
-    // Create the ticket
+    // Initialize the new ticket object
     const newTicket = new Ticket({
       title,
       description,
       status: 'Open',
       attachments,
       customer: customerId,
-      createdAt: readableDate,
-      updatedAt: new Date(),  // Initialize `updatedAt`
-      category: category
+      createdAt: now,
+      updatedAt: new Date(),  // Set `updatedAt` to current date
+      category: category || 'General', // Default to 'General' if category is missing
     });
 
     // Find all agents
@@ -246,22 +244,22 @@ exports.createTicket = async (req, res) => {
       return res.status(404).json({ msg: 'No agents found' });
     }
 
-    // Check if there are any agents who are not assigned any tasks
+    // Find agents without any tickets assigned
     const unassignedAgents = await User.find({
       role: 'agent',
-      _id: { $nin: await Ticket.distinct('assignedTo') } // Agents with no tickets
+      _id: { $nin: await Ticket.distinct('assignedTo') }, // Agents who aren't assigned any tickets
     }).exec();
 
+    // Assign to an unassigned agent if one is found
     if (unassignedAgents.length > 0) {
-      // Assign the ticket to an unassigned agent
-      newTicket.assignedTo = unassignedAgents[0]._id;
-      await Agent.findByIdAndUpdate(unassignedAgents[0]._id, { $inc: { ticketCount: 1 } }).exec();
-      await Agent.findByIdAndUpdate(unassignedAgents[0]._id, { $inc: { ticketOpen: 1 } }).exec();
+      const assignedAgent = unassignedAgents[0];
+      newTicket.assignedTo = assignedAgent._id;
+      await Agent.findByIdAndUpdate(assignedAgent._id, { $inc: { ticketCount: 1, ticketOpen: 1 } }).exec();
       await newTicket.save();
       return res.status(201).json({ msg: 'Ticket created and assigned to an unassigned agent', ticket: newTicket });
     }
 
-    // Count the number of tickets assigned to each agent
+    // If all agents are busy, assign the ticket to the least busy agent
     const agentTicketCounts = await Promise.all(
       agents.map(async (agent) => {
         const count = await Ticket.countDocuments({ assignedTo: agent._id });
@@ -269,9 +267,8 @@ exports.createTicket = async (req, res) => {
       })
     );
 
-    // Sort agents by ticket count and select the least busy
-    const leastBusyAgent = agentTicketCounts
-      .sort((a, b) => a.count - b.count)[0]?.agent; // Optional chaining in case array is empty
+    // Sort agents by their assigned ticket count, and pick the least busy
+    const leastBusyAgent = agentTicketCounts.sort((a, b) => a.count - b.count)[0]?.agent;
 
     if (!leastBusyAgent) {
       return res.status(404).json({ msg: 'Could not determine the least busy agent' });
@@ -279,16 +276,19 @@ exports.createTicket = async (req, res) => {
 
     // Assign the ticket to the least busy agent
     newTicket.assignedTo = leastBusyAgent._id;
-    await Agent.findByIdAndUpdate(leastBusyAgent._id, { $inc: { ticketCount: 1 } }).exec();
-    await Agent.findByIdAndUpdate(leastBusyAgent._id, { $inc: { ticketOpen: 1 } }).exec();
-
+    await Agent.findByIdAndUpdate(leastBusyAgent._id, { $inc: { ticketCount: 1, ticketOpen: 1 } }).exec();
     const savedTicket = await newTicket.save();
-    res.status(201).json({ msg: 'Ticket created and assigned', ticket: savedTicket });
+
+    // Respond with the created ticket
+    res.status(201).json({ msg: 'Ticket created and assigned to least busy agent', ticket: savedTicket });
+    
   } catch (error) {
+    // Log error for debugging and respond with server error status
     console.error('Error creating ticket:', error);
     res.status(500).json({ msg: 'Server error', error });
   }
 };
+
 
 // Retrieve ticket by ID
 exports.getTicket = async (req, res) => {

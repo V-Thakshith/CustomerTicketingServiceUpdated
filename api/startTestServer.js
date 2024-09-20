@@ -4,7 +4,7 @@ const connectDB = require('./config/testdb');
 const startServer = async () => {
   try {
     await connectDB(); // Wait for the DB connection
-    const PORT = process.env.PORT || 5000;
+    const PORT =  5001;
     const server = app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

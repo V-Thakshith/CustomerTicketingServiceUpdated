@@ -26,7 +26,7 @@ exports.registerCustomer = async (req, res) => {
     const hashedPassword = await bcrypt.hash(signupPassword, 10);
 
     // Create the new user
-    const customer = new User({ 
+    const customer = new Customer({ 
       name: fullName, 
       email: signupEmail, 
       password: hashedPassword, 
@@ -58,8 +58,8 @@ exports.registerAgent = async (req, res) => {
   const { fullName,signupEmail, signupPassword,dob,country,gender } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(signupPassword, 10);
-    const agent = new Agent({ name:fullName, email:signupEmail, password: hashedPassword, gender, dob, country });
-    await agent.save();
+    const agent = new Agent({ name:fullName, email:signupEmail, password: hashedPassword, role:'agent',gender, dob, country });
+    const newUser=await agent.save();
     res.status(201).json({ msg: 'Agent registered successfully' });
   } catch (error) {
     res.status(500).json({ msg: 'Server error', error });
@@ -71,7 +71,7 @@ exports.registerManager = async (req, res) => {
   const { fullName,signupEmail, signupPassword,dob,country,gender } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(signupPassword, 10);
-    const manager = new Manager({ name:fullName, email:signupEmail, password: hashedPassword, gender, dob, country });
+    const manager = new Manager({ name:fullName, email:signupEmail, password: hashedPassword, role:'agent',gender, dob, country });
     await manager.save();
     res.status(201).json({ msg: 'Manager registered successfully' });
   } catch (error) {

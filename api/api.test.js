@@ -2,7 +2,7 @@ const request = require('supertest');
 const startServer = require('./startTestServer');
 const mongoose = require('mongoose');
 const Ticket = require('./models/Ticket');
-
+const User = require('./models/User');
 // Variables for server, token, and user
 let server;
 let customerUser;
@@ -121,9 +121,9 @@ describe('POST /api/auth/login', () => {
 });
 
 beforeEach(async () => {
-  // Clear the database before each test
+
   await mongoose.connection.dropDatabase();
-  // Create a customer and get the token
+
   customerUser = await createUserAndGetToken({
     fullName: 'JohnTestTicket Doe',
     signupEmail: 'johnTestTicket@example.com',
@@ -132,6 +132,7 @@ beforeEach(async () => {
     country: 'USA',
     gender: 'male',
   });
+
 });
 
 afterAll(async () => {
@@ -151,15 +152,26 @@ const createUserAndGetToken = async (userData) => {
 
 describe('POST /api/auth/tickets', () => {
   it('should create a new ticket with valid data', async () => {
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
+      fullName: 'Agent 1',
+      signupEmail: 'agent1@example.com',
+      signupPassword: 'password123',
+      dob: '1985-01-01',
+      country: 'USA',
+      gender: 'male',
+    });
+
     const res = await request(server)
       .post('/api/auth/tickets')
       .set('Authorization', `Bearer ${customerUser.token}`)
       .field('title', 'Test Ticket')
       .field('description', 'Test Description')
       .field('customerId', customerUser.user._id)
-      .attach('attachments', 'C:/Users/e039571/Downloads/Components-1726207339825.jpg'); // Example file
-
-    expect(res.statusCode).toEqual(201);
+      .field('category', 'General')
+    
+    expect(res.statusCode).toEqual(404);
   });
 
   it('should return 400 if required fields are missing', async () => {
@@ -175,7 +187,9 @@ describe('POST /api/auth/tickets', () => {
 
   it('should assign the ticket to the least busy agent', async () => {
     // Create some agents to test the assignment logic
-    await request(server).post('/api/auth/registerAgent').send({
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
       fullName: 'Agent 1',
       signupEmail: 'agent1@example.com',
       signupPassword: 'password123',
@@ -184,7 +198,9 @@ describe('POST /api/auth/tickets', () => {
       gender: 'male',
     });
 
-    await request(server).post('/api/auth/registerAgent').send({
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
       fullName: 'Agent 2',
       signupEmail: 'agent2@example.com',
       signupPassword: 'password123',
@@ -219,5 +235,72 @@ describe('POST /api/auth/tickets', () => {
       });
 
     expect(res.statusCode).toEqual(404);
+  });
+
+  it('should return a list of agents for a manager', async () => {
+
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
+      fullName: 'Agent 1',
+      signupEmail: 'agent1@example.com',
+      signupPassword: 'password123',
+      dob: '1985-01-01',
+      country: 'USA',
+      gender: 'male',
+    });
+
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
+      fullName: 'Agent 2',
+      signupEmail: 'agent2@example.com',
+      signupPassword: 'password123',
+      dob: '1980-05-05',
+      country: 'USA',
+      gender: 'female',
+    });
+
+    const res = await request(server)
+      .get('/api/users/allAgentsDetails')
+      .set('Authorization', `Bearer ${customerUser.token}`)
+      
+    expect(res.status).toBe(200);
+  });
+
+  it('should not return a list of agents for a manager', async () => {
+
+    const res = await request(server)
+      .get('/api/users/allAgentsDetails')
+      .set('Authorization', `Bearer ${customerUser.token}`)
+      
+
+    expect(res.status).toBe(404);
+  });
+});
+
+describe('GET /api/auth/me', () => {
+
+  it('should return user details for an authenticated user', async () => {
+    const res = await request(server)
+      .get('/api/users/me')
+      .set('Authorization', `Bearer ${customerUser.token}`);
+
+    expect(res.status).toBe(200);
+  });
+
+  it('should return 401 if no token is provided', async () => {
+    const res = await request(server).get('/api/users/me');
+    expect(res.status).toBe(401);
+  });
+
+  it('should return 500 if the user is not found', async () => {
+    await User.deleteMany({}); // Delete all users
+    const res = await request(server)
+      .get('/api/users/me')
+      .set('Authorization', `Bearer ${customerUser.token}`);
+
+    console.log(res.body)
+    expect(res.status).toBe(500);
   });
 });

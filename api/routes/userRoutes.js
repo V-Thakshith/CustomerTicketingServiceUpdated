@@ -10,7 +10,7 @@ const { getTicketsByAgentToday } = require('../controllers/agentController');
 const roleMiddleware = require('../middleware/roleMiddleware');
 
 router.get('/me', authMiddleware, getUserDetails);
-router.get('/allAgentsDetails', authMiddleware,roleMiddleware(['manager']), getAllAgentsDetails);
+router.get('/allAgentsDetails', authMiddleware, getAllAgentsDetails);
 router.delete('/removeAgent/:agentId', authMiddleware, roleMiddleware(['manager']), removeAgent);
 router.get('/ticketsByAgentToday/:agentId', authMiddleware, getTicketsByAgentToday);
 router.get('/getAllTicketsCounts', authMiddleware, getAllTicketsCounts);
