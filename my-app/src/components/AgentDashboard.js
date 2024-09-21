@@ -5,19 +5,19 @@ import api from "../api"; // Ensure this is correctly configured for your API
 import { UserContext } from "../UserContext";
 import TicketModal from "./TicketModal";
 import TicketChart from "./TicketChart";
- 
+
 const AgentDashboard = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTicket, setSelectedTicket] = useState(null); // New state for selected ticket
-  const [showModal, setShowModal] = useState(false); // State to control the modal
- 
-  const { user, ready } = useContext(UserContext); // Use user from UserContext
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const { user, setUser, ready } = useContext(UserContext); // Added setUser here
   const navigate = useNavigate();
- 
+
   const categoryOrder = {
     Technical: 1,
     Billing: 2,
@@ -25,23 +25,23 @@ const AgentDashboard = () => {
     Product: 4,
     All: 5,
   };
- 
+
   const categories = ["All", "Technical", "Billing", "General", "Product"];
- 
+
   useEffect(() => {
     if (!ready) return;
     if (!user) {
       navigate("/");
       return;
     }
- 
+
     fetchTickets();
   }, [user, ready, navigate]);
- 
+
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const response = await api.get(`/tickets/assigned/${user._id}`); // Adjust endpoint as needed
+      const response = await api.get(`/tickets/assigned/${user._id}`);
       const sortedTickets = response.data.sort((a, b) => {
         if (a.category === b.category) return 0;
         return (
@@ -56,50 +56,64 @@ const AgentDashboard = () => {
       setLoading(false);
     }
   };
- 
+
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
   };
- 
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
- 
+
   const handleViewTicket = (ticket) => {
     setSelectedTicket(ticket);
     setShowModal(true);
   };
- 
+
   const handleCloseModal = () => {
-    window.location.reload();
-    fetchTickets();
+    fetchTickets(); // Refetch tickets to ensure the UI is updated
     setShowModal(false);
     setSelectedTicket(null);
   };
- 
-  const handleTicketAction = (action) => {
+
+  const handleTicketAction = async (updatedTicket) => {
+    // Optimistically update the ticket in the state
+    setTickets((prevTickets) =>
+      prevTickets.map((ticket) =>
+        ticket._id === updatedTicket._id ? updatedTicket : ticket
+      )
+    );
+
+    // Fetch updated user data after ticket action
+    try {
+      const { data } = await api.get(`/users/me`);
+      setUser(data); // Update user in context
+    } catch (error) {
+      console.error("Error updating user data:", error);
+    }
+
     handleCloseModal(); // Close the modal after action
   };
- 
+
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/");
   };
- 
+
   const resolvedTickets = tickets.filter(ticket => ticket.status === 'Resolved');
- 
+
   const filteredTickets = tickets.filter((ticket) => {
     const matchesCategory =
-      selectedCategory === "All" || ticket.category === selectedCategory;
+      (selectedCategory === "All" || ticket.category === selectedCategory) && ticket.status !== 'Resolved';
     const matchesSearch =
       ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.customer.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
- 
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
- 
+
   return (
     <div className="dashboard-container">
       <nav className="sidebar">
@@ -120,7 +134,7 @@ const AgentDashboard = () => {
           </ul>
         </div>
       </nav>
- 
+
       <main className="main-content">
         <div className="header">
           <div className="header-left">
@@ -132,7 +146,7 @@ const AgentDashboard = () => {
             </button>
           </div>
         </div>
-       
+
         {/* Search Bar */}
         <div className="search-bar-container">
           <input
@@ -144,8 +158,8 @@ const AgentDashboard = () => {
           />
           <button className="search-button">Search</button>
         </div>
-        <br></br>
- 
+        <br />
+
         {/* Category Dropdown */}
         <div className="dropdown-container">
           <label htmlFor="category-select">Filter by Category:</label>
@@ -162,14 +176,14 @@ const AgentDashboard = () => {
             ))}
           </select>
         </div>
-        <br></br>
- 
+        <br />
+
         {/* All Tickets Section */}
         <div id="all-tickets" className="card">
           <div className="card-header">
             <h5>All Tickets</h5>
           </div>
-          <br></br>
+          <br />
           <div className="table-container">
             <table className="table">
               <thead>
@@ -209,50 +223,44 @@ const AgentDashboard = () => {
             </table>
           </div>
         </div>
- 
+
         <div id="reports" className="card">
-              <div className="card-header">
-                <h5>Resolved Tickets</h5>
-              </div>
-              <br />
-              <div className="table-container">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Ticket Number</th>
-                      <th>Customer Name</th>
-                      <th>Subject</th>
-                      <th>Category</th>
-                      <th>Date Resolved</th>
+          <div className="card-header">
+            <h5>Resolved Tickets</h5>
+          </div>
+          <br />
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Ticket Number</th>
+                  <th>Customer Name</th>
+                  <th>Subject</th>
+                  <th>Category</th>
+                  <th>Date Resolved</th>
+                </tr>
+              </thead>
+              <tbody>
+                {resolvedTickets.length > 0 ? (
+                  resolvedTickets.map(ticket => (
+                    <tr key={ticket._id}>
+                      <td>{ticket._id}</td>
+                      <td>{ticket.customer.name}</td>
+                      <td>{ticket.title}</td>
+                      <td>{ticket.category}</td>
+                      <td>{new Date(ticket.updatedAt).toLocaleDateString('en-US')}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {resolvedTickets.length > 0 ? (
-                      resolvedTickets.map(ticket => (
-                        <tr key={ticket._id}>
-                          <td>{ticket._id}</td>
-                          <td>{ticket.customer.name}</td>
-                          <td>{ticket.title}</td>
-                          <td>{ticket.category}</td>
-                          <td>{new Date().toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="5">No resolved tickets</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
- 
-       
- 
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5">No resolved tickets</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* Reports Section */}
         <div id="reports" className="card">
           <div className="card-header">
@@ -270,19 +278,17 @@ const AgentDashboard = () => {
             )}
           </div>
         </div>
- 
+
         {showModal && (
           <TicketModal
             ticket={selectedTicket}
-            onClose={handleCloseModal}
-            onAction={handleTicketAction}
+            handleCloseModal={handleCloseModal}
+            onAction={handleTicketAction} // Pass action callback
           />
         )}
       </main>
     </div>
   );
 };
- 
+
 export default AgentDashboard;
- 
- 

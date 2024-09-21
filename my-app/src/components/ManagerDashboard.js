@@ -17,6 +17,7 @@ const ManagerDashboard = () => {
   const [ticketAssignments, setTicketAssignments] = useState({});
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isLoadingAction, setIsLoadingAction] = useState(false); // New loading state
   const navigate = useNavigate();
  
   // Access user data from context
@@ -54,18 +55,35 @@ const ManagerDashboard = () => {
     }
   };
  
-  const getTicketCountForAgent = (agentId) => {
-    const agentTicket = ticketCounts.find(ticket => ticket.agentId === agentId);
-    return agentTicket ? agentTicket.ticketCount : 0;
+  const getAssignedTicketCountForAgent = (agentId) => {
+    const agentTicket = agents.find(agent => agent._id === agentId);
+    return agentTicket.ticketOpen + agentTicket.ticketInProgress;
+  };
+
+  const getResolvedTicketCountForAgent = (agentId) => {
+    const agentTicket = agents.find(agent => agent._id === agentId);
+    return agentTicket.ticketResolved;
   };
  
   const handleReassignTicket = async (ticketId) => {
+    const newAgentId = ticketAssignments[ticketId];
+    
+    // Optimistically update the ticket assignment locally
+    const updatedTickets = tickets.map(ticket =>
+      ticket._id === ticketId ? { ...ticket, assignedTo: { _id: newAgentId, name: agents.find(a => a._id === newAgentId)?.name || '' } } : ticket
+    );
+    setTickets(updatedTickets);
+    
+    setIsLoadingAction(true);  // Set loading state
+
     try {
-      const newAgentId = ticketAssignments[ticketId];
       await api.put(`/tickets/tickets/${ticketId}/reassign`, { newAgentId });
-      fetchAgentsAndTickets();
+      fetchAgentsAndTickets();  // Optionally refetch data for accuracy
     } catch (error) {
       console.error('Error reassigning ticket:', error);
+      setError('Reassignment failed.');
+    } finally {
+      setIsLoadingAction(false);  // Reset loading state
     }
   };
  
@@ -81,11 +99,22 @@ const ManagerDashboard = () => {
   };
  
   const handleTicketAction = async (updatedTicket) => {
+    // Optimistically update the ticket status locally
+    const updatedTickets = tickets.map(ticket =>
+      ticket._id === updatedTicket._id ? updatedTicket : ticket
+    );
+    setTickets(updatedTickets);
+
+    setIsLoadingAction(true);  // Set loading state
+    
     try {
-      await api.put(`/tickets/tickets/${updatedTicket._id}`, updatedTicket);
+      //await api.put(`/tickets/tickets/${updatedTicket._id}`, updatedTicket);
       fetchAgentsAndTickets();
     } catch (error) {
       console.error('Error updating ticket:', error);
+      setError('Ticket update failed.');
+    } finally {
+      setIsLoadingAction(false);  // Reset loading state
     }
   };
  
@@ -133,13 +162,15 @@ const ManagerDashboard = () => {
                 <tr>
                   <th>Agent Name</th>
                   <th>Assigned Tickets</th>
+                  <th>Resolved Tickets</th>
                 </tr>
               </thead>
               <tbody>
                 {agents.map(agent => (
                   <tr key={agent._id}>
                     <td>{agent.name}</td>
-                    <td>{getTicketCountForAgent(agent._id)}</td>
+                    <td>{getAssignedTicketCountForAgent(agent._id)}</td>
+                    <td>{getResolvedTicketCountForAgent(agent._id)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -188,7 +219,9 @@ const ManagerDashboard = () => {
                             </option>
                           ))}
                         </select>
-                        <button onClick={() => handleReassignTicket(ticket._id)}>Reassign</button>
+                        <button onClick={() => handleReassignTicket(ticket._id)} disabled={isLoadingAction}>
+                          {isLoadingAction ? 'Reassigning...' : 'Reassign'}
+                        </button>
                       </td>
                       <td>
                         <button onClick={() => handleViewTicket(ticket)}>View</button>
@@ -201,73 +234,60 @@ const ManagerDashboard = () => {
         </div>
        
         <div id="reports" className="card">
-              <div className="card-header">
-                <h5>Resolved Tickets</h5>
-              </div>
-              <br />
-              <div className="table-container">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Ticket Number</th>
-                      <th>Customer Name</th>
-                      <th>Subject</th>
-                      <th>Category</th>
-                      <th>Date Resolved</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-  {resolvedTickets.length > 0 ? (
-    resolvedTickets.map(ticket => (
-      <tr key={ticket._id}>
-        <td>{ticket._id}</td>
-        <td>{ticket.customer?.name || 'Unknown Customer'}</td>
-        <td>{ticket.title}</td>
-        <td>{ticket.category}</td>
-        <td>{new Date().toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric'
-        })}</td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="5">No resolved tickets</td>
-    </tr>
-  )}
-</tbody>
-
-                </table>
-              </div>
-            </div>
-       
- 
-        {showModal && (
-          <TicketModal
-            ticket={selectedTicket}
-            onClose={handleCloseModal}
-            onAction={handleTicketAction}
-          />
-        )}
- 
-        {showPopup && (
-          <RegisterAgentPopup onClose={() => setShowPopup(false)} />
-        )}
- 
-        <div id="reports" className="card">
           <div className="card-header">
-            <h5>Reports</h5>
+            <h5>Resolved Tickets</h5>
           </div>
-          <div className="card-body">
-            <ManagerTicketChart />
+          <br />
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Ticket Number</th>
+                  <th>Customer Name</th>
+                  <th>Subject</th>
+                  <th>Category</th>
+                  <th>Date Resolved</th>
+                </tr>
+              </thead>
+              <tbody>
+                {resolvedTickets.length > 0 ? (
+                  resolvedTickets.map(ticket => (
+                    <tr key={ticket._id}>
+                      <td>{ticket._id}</td>
+                      <td>{ticket.customer?.name || 'Unknown Customer'}</td>
+                      <td>{ticket.title}</td>
+                      <td>{ticket.category}</td>
+                      <td>{new Date(ticket.updatedAt).toLocaleString()}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5">No tickets resolved yet.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
+ 
+        <div className="charts">
+          <ManagerTicketChart ticketCounts={ticketCounts} resolvedTickets={resolvedTickets} />
+        </div>
       </main>
+ 
+      {/* Modal for ticket details */}
+      {showModal && (
+        <TicketModal
+          ticket={selectedTicket}
+          handleCloseModal={handleCloseModal}
+          onAction={handleTicketAction}
+        />
+      )}
+ 
+      {/* Popup for registering an agent */}
+      {showPopup && <RegisterAgentPopup handleClose={() => setShowPopup(false)} />}
     </div>
   );
 };
  
 export default ManagerDashboard;
- 
- 

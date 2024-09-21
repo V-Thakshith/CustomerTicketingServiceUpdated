@@ -4,6 +4,9 @@ const Manager = require('../models/Manager');
 const Agent = require('../models/Agent');
 const Customer = require('../models/Customer');
 const Ticket = require('../models/Ticket');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config/jwtConfig');
 
 const connectDB = async () => {
   try {
@@ -12,10 +15,12 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
 
+    const hashedPassword = await bcrypt.hash("password123", 10);
+
     const DefaultManager = new Manager({
       name: "Bhuvan Reddy Sagar",
       email: "vadluribhuvansagar.reddy@team.telstra.com",
-      password: "password123",
+      password: hashedPassword,
       gender: "Male",
       dob: "2002-06-15",
       country: "India"
@@ -24,7 +29,7 @@ const connectDB = async () => {
     const DefaultAgent = new Agent({
       name: "Salaj Saxena",
       email: "salaj.saxena@team.telstra.com",
-      password: "password123",
+      password: hashedPassword,
       gender: "Male",
       dob: "2002-06-15",
       country: "India"
@@ -33,7 +38,7 @@ const connectDB = async () => {
     const DefaultCustomer = new Customer({
       name: "Vaishnavi B",
       email: "vaishnavib.goudar@team.telstra.com",
-      password: "password123",
+      password: hashedPassword,
       gender: "Female",
       dob: "2001-06-16",
       country: "India"
