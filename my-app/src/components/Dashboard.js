@@ -218,18 +218,8 @@ const Dashboard = () => {
                                 onChange={handleInputChange}
                                 required
                             />
- 
-                            <label htmlFor="description">Description</label>
-                            <textarea
-                                id="description"
-                                name="description"
-                                rows="4"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                                required
-                            ></textarea>
- 
-                            <label htmlFor="category">Category</label>
+
+<label htmlFor="category">Category</label>
                             <select
                                 id="category"
                                 name="category"
@@ -243,6 +233,18 @@ const Dashboard = () => {
                                 <option value="General">General</option>
                                 <option value="Product">Product</option>
                             </select>
+ 
+                            <label htmlFor="description">Description</label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="4"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                required
+                            ></textarea>
+ 
+                            
  
                             <label htmlFor="photo">Upload Photos</label>
                             <input

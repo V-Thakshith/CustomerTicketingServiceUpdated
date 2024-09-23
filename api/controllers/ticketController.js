@@ -27,18 +27,18 @@ exports.updateTicketStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
- 
+
     // Validate status is provided
     if (!status) {
       return res.status(400).json({ msg: 'Status is required' });
     }
- 
+
     // Find the ticket by ID
     const ticket = await Ticket.findById(id);
     if (!ticket) {
       return res.status(404).json({ msg: 'Ticket not found' });
     }
- 
+
     // Validate status transition
     const currentStatus = ticket.status;
     let validStatus = false;
@@ -47,43 +47,58 @@ exports.updateTicketStatus = async (req, res) => {
     } else if (currentStatus === 'In Progress') {
       validStatus = status === 'Resolved';
     }
- 
+
     if (!validStatus) {
       return res.status(400).json({ msg: 'Invalid status transition' });
     }
- 
+
     // Update the ticket status and updatedAt field
     ticket.status = status;
-    ticket.updatedAt = new Date();  // Manually update `updatedAt`
+    ticket.updatedAt = new Date(); // Manually update `updatedAt`
     const updatedTicket = await ticket.save();
- 
+
     // Update the agent ticket counts
     const agent = await User.findById(ticket.assignedTo).exec();
     if (!agent) {
       return res.status(404).json({ msg: 'Agent not found' });
     }
- 
+
     const updateAgent = { $inc: { ticketCount: 0 } };
     if (currentStatus === "Open") updateAgent.$inc.ticketOpen = -1;
     if (currentStatus === "In Progress") updateAgent.$inc.ticketInProgress = -1;
     if (currentStatus === "Resolved") updateAgent.$inc.ticketResolved = -1;
- 
+
     if (status === "Open") updateAgent.$inc.ticketOpen = 1;
     if (status === "In Progress") updateAgent.$inc.ticketInProgress = 1;
     if (status === "Resolved") updateAgent.$inc.ticketResolved = 1;
- 
+
     await Agent.findByIdAndUpdate(ticket.assignedTo, updateAgent).exec();
- 
-    // Notify the customer
-    const message = `Your ticket with ID ${id} has been updated to ${status}.`;
+
+    // Notify the customer with a detailed message
+    let message;
+    switch (status) {
+      case 'In Progress':
+        message = `Your ticket with ID ${id} is now in progress. You can contact your assigned agent, ${agent.name}, at ${agent.email} for further clarification.`;
+        break;
+      case 'Resolved':
+        message = `Good news! Your ticket with ID ${id} has been resolved. Thank you for your patience. If you need further assistance, please contact our support team or raise a new ticket.`;
+        break;
+      case 'Open':
+        message = `Your ticket with ID ${id} has been reopened. If you have additional information, please provide it to your assigned agent or contact our support team.`;
+        break;
+      default:
+        message = `Your ticket with ID ${id} has been updated to ${status}.`;
+    }
+
     await notifyCustomer(id, message);
- 
+
     res.status(200).json({ msg: 'Ticket status updated', ticket: updatedTicket });
   } catch (error) {
     console.error('Error updating ticket status:', error);
     res.status(500).json({ msg: 'Server error', error });
   }
 };
+
  
 exports.updateTicketStatusToResolved = async (req, res) => {
   try {

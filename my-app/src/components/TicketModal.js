@@ -79,7 +79,6 @@ const TicketModal = ({ ticket, handleCloseModal:onClose, onAction }) => {
             <option value="Open">Open</option>
             <option value="In Progress">In Progress</option>
             <option value="Resolved">Resolved</option>
-            <option value="Closed">Closed</option> {/* In case Closed is also an option */}
           </select>
   
           <button className="action-button" onClick={handleChangeStatus}>
