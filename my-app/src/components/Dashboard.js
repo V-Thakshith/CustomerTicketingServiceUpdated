@@ -130,7 +130,7 @@ const Dashboard = () => {
     };
  
     return (
-        <div className="dashboard-container">
+        <div className="dashboard-container1">
            
     <div className="sidebar1">
         <div className="logo">Teleassist</div>
@@ -143,8 +143,9 @@ const Dashboard = () => {
     </div>
  
     <main className="main-content1">
-        <header className="header">
-            <button className="logout-button" onClick={handleLogout}>Logout</button>
+    <header className="header">
+          <h2 className="header-h2">Welcome {user?.name || 'Customer'}</h2> {/* Display the user name */}
+          <button className="logout-button" onClick={handleLogout}>Logout</button>
         </header>
        
         <div className="top-bar">
@@ -165,7 +166,7 @@ const Dashboard = () => {
                 Raise Ticket
             </button>
         </div>
-        <div className="table-container">
+        <div id="tickets" className="table-container">
                 <table className="info-table">
                     <thead>
                         <tr>
@@ -243,8 +244,6 @@ const Dashboard = () => {
                                 onChange={handleInputChange}
                                 required
                             ></textarea>
- 
-                            
  
                             <label htmlFor="photo">Upload Photos</label>
                             <input

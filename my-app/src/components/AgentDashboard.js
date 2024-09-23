@@ -5,7 +5,7 @@ import api from "../api"; // Ensure this is correctly configured for your API
 import { UserContext } from "../UserContext";
 import TicketModal from "./TicketModal";
 import TicketChart from "./TicketChart";
-
+ 
 const AgentDashboard = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -14,10 +14,10 @@ const AgentDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+ 
   const { user, setUser, ready } = useContext(UserContext); // Added setUser here
   const navigate = useNavigate();
-
+ 
   const categoryOrder = {
     Technical: 1,
     Billing: 2,
@@ -25,19 +25,19 @@ const AgentDashboard = () => {
     Product: 4,
     All: 5,
   };
-
+ 
   const categories = ["All", "Technical", "Billing", "General", "Product"];
-
+ 
   useEffect(() => {
     if (!ready) return;
     if (!user) {
       navigate("/");
       return;
     }
-
+ 
     fetchTickets();
   }, [user, ready, navigate]);
-
+ 
   const fetchTickets = async () => {
     setLoading(true);
     try {
@@ -56,26 +56,26 @@ const AgentDashboard = () => {
       setLoading(false);
     }
   };
-
+ 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
   };
-
+ 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-
+ 
   const handleViewTicket = (ticket) => {
     setSelectedTicket(ticket);
     setShowModal(true);
   };
-
+ 
   const handleCloseModal = () => {
     fetchTickets(); // Refetch tickets to ensure the UI is updated
     setShowModal(false);
     setSelectedTicket(null);
   };
-
+ 
   const handleTicketAction = async (updatedTicket) => {
     // Optimistically update the ticket in the state
     setTickets((prevTickets) =>
@@ -83,7 +83,7 @@ const AgentDashboard = () => {
         ticket._id === updatedTicket._id ? updatedTicket : ticket
       )
     );
-
+ 
     // Fetch updated user data after ticket action
     try {
       const { data } = await api.get(`/users/me`);
@@ -91,17 +91,17 @@ const AgentDashboard = () => {
     } catch (error) {
       console.error("Error updating user data:", error);
     }
-
+ 
     handleCloseModal(); // Close the modal after action
   };
-
+ 
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/");
   };
-
+ 
   const resolvedTickets = tickets.filter(ticket => ticket.status === 'Resolved');
-
+ 
   const filteredTickets = tickets.filter((ticket) => {
     const matchesCategory =
       (selectedCategory === "All" || ticket.category === selectedCategory) && ticket.status !== 'Resolved';
@@ -110,43 +110,35 @@ const AgentDashboard = () => {
       ticket.customer.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
-
+ 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
-
+ 
   return (
-    <div className="dashboard-container">
-      <nav className="sidebar">
+    <div className="dashboard-container2">
+      <div className="sidebar2">
         <div className="sidebar-sticky">
+        <div className="logo">Teleassist</div>
           <ul className="nav-list">
-            <li className="nav-item">
-              <a className="nav-link" href="#my-tickets">My Tickets</a>
-            </li>
             <li className="nav-item">
               <a className="nav-link" href="#all-tickets">All Tickets</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#customers">Customers</a>
+              <a className="nav-link" href="#resolved-tickets">Resolved Tickets</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="#reports">Reports</a>
             </li>
           </ul>
         </div>
-      </nav>
-
-      <main className="main-content">
-        <div className="header">
-          <div className="header-left">
-            <h2>Welcome, {user.name}</h2>
-          </div>
-          <div className="header-right">
-            <button className="logout-button" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-        </div>
-
+      </div>
+ 
+      <main className="main-content2">
+      <header className="header">
+          <h2 className="header2-h2">Welcome {user?.name || 'Agent'}</h2> {/* Display the user name */}
+          <button className="logout-button" onClick={handleLogout}>Logout</button>
+        </header>
+ 
         {/* Search Bar */}
         <div className="search-bar-container">
           <input
@@ -159,7 +151,7 @@ const AgentDashboard = () => {
           <button className="search-button">Search</button>
         </div>
         <br />
-
+ 
         {/* Category Dropdown */}
         <div className="dropdown-container">
           <label htmlFor="category-select">Filter by Category:</label>
@@ -177,7 +169,7 @@ const AgentDashboard = () => {
           </select>
         </div>
         <br />
-
+ 
         {/* All Tickets Section */}
         <div id="all-tickets" className="card">
           <div className="card-header">
@@ -223,8 +215,8 @@ const AgentDashboard = () => {
             </table>
           </div>
         </div>
-
-        <div id="reports" className="card">
+ 
+        <div id="resolved-tickets" className="card">
           <div className="card-header">
             <h5>Resolved Tickets</h5>
           </div>
@@ -260,7 +252,7 @@ const AgentDashboard = () => {
             </table>
           </div>
         </div>
-
+ 
         {/* Reports Section */}
         <div id="reports" className="card">
           <div className="card-header">
@@ -278,7 +270,7 @@ const AgentDashboard = () => {
             )}
           </div>
         </div>
-
+ 
         {showModal && (
           <TicketModal
             ticket={selectedTicket}
@@ -290,5 +282,7 @@ const AgentDashboard = () => {
     </div>
   );
 };
-
+ 
 export default AgentDashboard;
+ 
+ 

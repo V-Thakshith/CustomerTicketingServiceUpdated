@@ -5,32 +5,46 @@ body {
   margin: 0;
   padding: 0;
 }
-
+ 
 /* Dashboard Container */
-.dashboard-container {
+.dashboard-container3 {
   display: flex;
 }
-
+ 
 /* Sidebar styles */
-.sidebar {
-  width: 16.666%;
+.sidebar3 {
+  width: 200px;
+  height: 100vh;
   background-color: #007bff;
   color: white;
-  height: 100vh;
+  padding: 20px;
   position: fixed;
-  padding-top: 20px;
-  margin-top: 50px;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0;
+  padding-top: 0;
 }
-
+ 
+.sidebar3 .logo{
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10%;
+  margin-top: 5%;
+  align-items: flex-start;
+}
+ 
 .nav-list {
   list-style: none;
   padding: 0;
 }
-
+ 
 .nav-item {
   margin-bottom: 10px;
 }
-
+ 
 .nav-item a {
   text-decoration: none;
   color: white;
@@ -38,21 +52,22 @@ body {
   padding: 10px 20px;
   transition: background-color 0.3s ease;
 }
-
+ 
 .nav-item a:hover {
   background-color: #64adfb;
 }
-
+ 
 /* Main content styles */
-.main-content {
-  margin-left: 16.666%;
-  margin-top: 50px; /* Adjust to ensure it starts below the fixed header */
-  padding: 20px; /* Increased padding for better spacing */
-  width: 83.333%;
-  background-color: #f0f4f8;
-  box-sizing: border-box;
+.main-content3 {
+  margin-left: 220px; /* Adjust this margin based on the sidebar1's width */
+  padding: 20px;
+  background-color: #f0f2f5;
+  height: 100vh;
+  overflow-y: auto;
+  margin-top: 0;
+  padding-top: 0;
 }
-
+ 
 /* Header styles */
 .header {
   display: flex;
@@ -69,14 +84,18 @@ body {
   border-bottom: 2px solid #007bff;
   box-shadow: 0px 4px 2px -2px rgb(252, 251, 251);
 }
-
+ 
+.header3-h2{
+  color: #ffffff;
+}
+ 
 .header h2 {
   margin: 0;
   font-weight: bold;
   text-align: center; /* Center the heading text */
   flex-grow: 1; /* Allow header to use available space */
 }
-
+ 
 .logout-button {
   padding: 5px 30px;
   border: none;
@@ -85,23 +104,23 @@ body {
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s ease, color 0.3s ease;
-  
+ 
   position: absolute; /* Or fixed if you want it to stay in the same place on scroll */
   top: 10px; /* Adjust the distance from the top */
   right: 50px; /* Adjust the distance from the right edge */
 }
-
-
+ 
+ 
 .logout-button:hover {
   background-color: darkred; /* Darker shade for hover effect */
 }
-
+ 
 /* Table styles */
 .table-container {
   overflow-x: auto;
   margin-bottom: 20px;
 }
-
+ 
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -109,30 +128,30 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   border-radius: 8px;
 }
-
+ 
 .table th,
 .table td {
   padding: 12px 15px;
   border: 1px solid #ddd;
   text-align: left;
 }
-
+ 
 .table th {
   background-color: #007bff;
   color: white;
 }
-
+ 
 tbody tr:nth-child(even) {
   background-color: #f4faff; /* Light blue background for even rows */
 }
 tbody tr:nth-child(odd) {
   background-color: #ffffff; /* White background for odd rows */
 }
-
+ 
 .table tr:hover {
   background-color: #e0e7ff;
 }
-
+ 
 /* Card styles */
 .card {
   background-color: white;
@@ -141,20 +160,22 @@ tbody tr:nth-child(odd) {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
   margin-bottom: 30px; /* Adds space between the tables */
 }
-
+ 
 .card-header {
   text-align: left; /* Aligns the text to the left side */
   font-weight: bold;
   padding-left: 0; /* Removes default padding to align perfectly with the left edge */
 }
-
+ 
 .card h5 {
   margin-bottom: 40px;
   text-align: left;
   margin: 0;
   color: #080808;
 }
-
+ 
 .card p {
   color: #555;
 }
+ 
+ 

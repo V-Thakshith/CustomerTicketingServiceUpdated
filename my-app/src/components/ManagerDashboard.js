@@ -59,7 +59,7 @@ const ManagerDashboard = () => {
     const agentTicket = agents.find(agent => agent._id === agentId);
     return agentTicket.ticketOpen + agentTicket.ticketInProgress;
   };
-
+ 
   const getResolvedTicketCountForAgent = (agentId) => {
     const agentTicket = agents.find(agent => agent._id === agentId);
     return agentTicket.ticketResolved;
@@ -67,15 +67,15 @@ const ManagerDashboard = () => {
  
   const handleReassignTicket = async (ticketId) => {
     const newAgentId = ticketAssignments[ticketId];
-    
+   
     // Optimistically update the ticket assignment locally
     const updatedTickets = tickets.map(ticket =>
       ticket._id === ticketId ? { ...ticket, assignedTo: { _id: newAgentId, name: agents.find(a => a._id === newAgentId)?.name || '' } } : ticket
     );
     setTickets(updatedTickets);
-    
+   
     setIsLoadingAction(true);  // Set loading state
-
+ 
     try {
       await api.put(`/tickets/tickets/${ticketId}/reassign`, { newAgentId });
       fetchAgentsAndTickets();  // Optionally refetch data for accuracy
@@ -104,9 +104,9 @@ const ManagerDashboard = () => {
       ticket._id === updatedTicket._id ? updatedTicket : ticket
     );
     setTickets(updatedTickets);
-
+ 
     setIsLoadingAction(true);  // Set loading state
-    
+   
     try {
       //await api.put(`/tickets/tickets/${updatedTicket._id}`, updatedTicket);
       fetchAgentsAndTickets();
@@ -127,9 +127,10 @@ const ManagerDashboard = () => {
   if (error) return <p>{error}</p>;
  
   return (
-    <div className="dashboard-container">
-      <nav className="sidebar">
+    <div className="dashboard-container3">
+      <nav className="sidebar3">
         <div className="sidebar-sticky">
+        <div className="logo">Teleassist</div>
           <ul className="nav-list">
             <li className="nav-item">
               <a className="nav-link" href="#agents">Agents</a>
@@ -144,9 +145,9 @@ const ManagerDashboard = () => {
         </div>
       </nav>
  
-      <main className="main-content">
-        <header className="header">
-          <h2>Welcome {user?.name || 'Manager'}</h2> {/* Display the user name */}
+      <main className="main-content3">
+      <header className="header">
+          <h2 className="header3-h2">Welcome {user?.name || 'Manager'}</h2> {/* Display the user name */}
           <button className="logout-button" onClick={handleLogout}>Logout</button>
         </header>
  
@@ -291,3 +292,5 @@ const ManagerDashboard = () => {
 };
  
 export default ManagerDashboard;
+ 
+ 
