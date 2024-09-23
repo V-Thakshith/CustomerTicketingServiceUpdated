@@ -19,7 +19,7 @@ const connectDB = async () => {
 
     const DefaultManager = new Manager({
       name: "Bhuvan Reddy Sagar",
-      email: "vadluribhuvansagar.reddy@team.telstra.com",
+      email: "vadluribhuvansagar.reddy@gmail.com",
       password: hashedPassword,
       gender: "Male",
       dob: "2002-06-15",
@@ -28,7 +28,7 @@ const connectDB = async () => {
 
     const DefaultAgent = new Agent({
       name: "Salaj Saxena",
-      email: "salaj.saxena@team.telstra.com",
+      email: "salaj.saxena@gmail.com",
       password: hashedPassword,
       gender: "Male",
       dob: "2002-06-15",
@@ -37,7 +37,7 @@ const connectDB = async () => {
 
     const DefaultCustomer = new Customer({
       name: "Vaishnavi B",
-      email: "vaishnavib.goudar@team.telstra.com",
+      email: "vaishnavib.goudar@gmail.com",
       password: hashedPassword,
       gender: "Female",
       dob: "2001-06-16",
