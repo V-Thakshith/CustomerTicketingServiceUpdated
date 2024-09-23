@@ -8,8 +8,8 @@ const ContactPage = () => {
       <p>We'd love to hear from you! Here’s how you can reach us:</p>
      
       <h2>Company Information</h2>
-      <p><strong>Company Name:</strong> teleComco</p>
-      <p><strong>Email:</strong> telecommsupport@gmail.com</p>
+      <p><strong>Company Name:</strong> Teleassist</p>
+      <p><strong>Email:</strong> teleassist@gmail.com</p>
       <p><strong>Phone:</strong> 9980765670</p>
      
       <h2>Working Hours</h2>

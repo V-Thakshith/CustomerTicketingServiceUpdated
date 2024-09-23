@@ -132,8 +132,8 @@ const Login = () => {
     return (
         <div className="login-container">
             <div className="company-details">
-                <h1>Welcome to TelecomCo</h1>
-                <p>Manage all your TelecomCo services with ease.</p>
+                <h1>Welcome to Teleassist</h1>
+                <p>Manage all your Teleassist services with ease.</p>
             </div>
 
             <div className="login-boxes">
