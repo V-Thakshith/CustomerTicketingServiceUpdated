@@ -11,7 +11,7 @@ const roleMiddleware = require('../middleware/roleMiddleware');
 
 router.get('/me', authMiddleware, getUserDetails);
 router.get('/allAgentsDetails', authMiddleware, getAllAgentsDetails);
-router.delete('/removeAgent/:agentId', authMiddleware, roleMiddleware(['manager']), removeAgent);
+//router.delete('/removeAgent/:agentId', authMiddleware, roleMiddleware(['manager']), removeAgent);
 router.get('/ticketsByAgentToday/:agentId', authMiddleware, getTicketsByAgentToday);
 router.get('/getAllTicketsCounts', authMiddleware, getAllTicketsCounts);
 router.get('/getAllTicketsCountsToday', authMiddleware, getAllTicketsCountsToday);

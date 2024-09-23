@@ -8,11 +8,10 @@ const upload = require('../config/multer'); // Adjust path as needed
 //adding /tickets to view tickets
 router.get('/tickets', ticketController.getAllTickets);
 router.put('/tickets/:id/status',authMiddleware,roleMiddleware(['agent', 'manager']), ticketController.updateTicketStatus);
-router.put('/tickets/:id/statusresolve', authMiddleware, roleMiddleware(['agent', 'manager']), ticketController.updateTicketStatusToResolved);
+//router.put('/tickets/:id/statusresolve', authMiddleware, roleMiddleware(['agent', 'manager']), ticketController.updateTicketStatusToResolved);
 router.put('/tickets/:id/reassign', authMiddleware, roleMiddleware(['manager']), ticketController.reassignTicket);
-//
-router.get('/ticketCounts', ticketController.getAgentTicketCounts)
 
+router.get('/ticketCounts', ticketController.getAgentTicketCounts)
 
 router.post('/', upload.array('attachments', 10), ticketController.createTicket);
 router.get('/:id', authMiddleware, ticketController.getTicket);

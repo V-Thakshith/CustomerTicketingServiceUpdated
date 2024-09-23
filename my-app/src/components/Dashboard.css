@@ -13,13 +13,15 @@ body {
 .header {
     background-color: #007bff;
     color: white;
-    padding: 10px 20px;
+    padding: 20px 40px; /* Increased padding */
     display: flex;
     align-items: center;
     justify-content: flex-end;
     position: relative;
     gap: 40px;
+    height: 6%; /* Adjust height */
 }
+ 
  
 .logo {
     font-size: 1.5rem;
@@ -66,12 +68,6 @@ body {
  
 .logout-button:hover {
     background-color: #c82333;
-}
- 
-.main-content {
-    flex: 1;
-    padding: 20px;
-    background-color: #f0f2f5;
 }
  
 .top-bar {
@@ -124,7 +120,7 @@ body {
     justify-content: center; /* Centers the table horizontally */
     align-items: center; /* Centers the table vertically */
     width: 100%; /* Makes the container take up the full width */
-    margin-left: 20px;
+    margin-left: 1.2%;
 }
  
 .info-table {
@@ -268,8 +264,8 @@ body {
 }
  
  
-/* Sidebar styles */
-.sidebar {
+/* Sidebar1 styles */
+.sidebar1 {
     width: 200px;
     height: 100vh;
     background-color: #007bff;
@@ -285,35 +281,35 @@ body {
     padding-top: 0;
 }
  
-.sidebar .logo {
-    font-size: 1.5rem;
+.sidebar1 .logo {
+    font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 20px;
-    margin-top: 10px;
+    margin-bottom: 10%;
+    margin-top: 5%;
     align-items: flex-start;
    
 }
  
-.sidebar .nav-menu {
+.sidebar1 .nav-menu {
     display: flex;
     flex-direction: column;
     gap: 15px;
    
 }
  
-.sidebar .nav-menu a {
+.sidebar1 .nav-menu a {
     color: white;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
  
-.sidebar .nav-menu a:hover {
+.sidebar1 .nav-menu a:hover {
     text-decoration: underline;
 }
  
-/* Adjust main content to account for sidebar width */
-.main-content {
-    margin-left: 220px; /* Adjust this margin based on the sidebar's width */
+/* Adjust main content to account for sidebar1 width */
+.main-content1 {
+    margin-left: 220px; /* Adjust this margin based on the sidebar1's width */
     padding: 20px;
     background-color: #f0f2f5;
     height: 100vh;
@@ -321,3 +317,4 @@ body {
     margin-top: 0;
     padding-top: 0;
 }
+ 

@@ -11,7 +11,7 @@ router.post('/register', authController.registerCustomer);
 router.post('/registerAgent', authMiddleware, authController.registerAgent);
 
 // Manager registration (restricted to manager)
-router.post('/registerManager', authMiddleware, roleMiddleware(['manager']), authController.registerManager);
+//router.post('/registerManager', authMiddleware, roleMiddleware(['manager']), authController.registerManager);
 
 // Login route (same for all roles)
 router.post('/login', authController.loginUser);

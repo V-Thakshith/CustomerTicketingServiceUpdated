@@ -131,8 +131,9 @@ const Dashboard = () => {
  
     return (
         <div className="dashboard-container">
-    <div className="sidebar">
-        <div className="logo">TelecomCo</div>
+           
+    <div className="sidebar1">
+        <div className="logo">Teleassist</div>
         <nav className="nav-menu">
             <a href="#home">Home</a>
             <a href="#tickets">Tickets</a>
@@ -141,11 +142,8 @@ const Dashboard = () => {
         </nav>
     </div>
  
-    <main className="main-content">
+    <main className="main-content1">
         <header className="header">
-            <div className="profile-photo">
-                <img src="profile-photo-url" alt="Profile" />
-            </div>
             <button className="logout-button" onClick={handleLogout}>Logout</button>
         </header>
        
@@ -269,3 +267,4 @@ const Dashboard = () => {
 };
  
 export default Dashboard;
+ 

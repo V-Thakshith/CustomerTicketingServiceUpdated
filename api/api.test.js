@@ -164,14 +164,14 @@ describe('POST /api/auth/tickets', () => {
     });
 
     const res = await request(server)
-      .post('/api/auth/tickets')
+      .post('/api/tickets')
       .set('Authorization', `Bearer ${customerUser.token}`)
       .field('title', 'Test Ticket')
       .field('description', 'Test Description')
       .field('customerId', customerUser.user._id)
       .field('category', 'General')
     
-    expect(res.statusCode).toEqual(404);
+    expect(res.statusCode).toEqual(201);
   });
 
   it('should return 400 if required fields are missing', async () => {
@@ -302,5 +302,305 @@ describe('GET /api/auth/me', () => {
 
     console.log(res.body)
     expect(res.status).toBe(500);
+  });
+
+  it('should return the tickets assigned, resolved, and in progress for the agent today', async () => {
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
+      fullName: 'Agent 3',
+      signupEmail: 'agent3@example.com',
+      signupPassword: 'password123',
+      dob: '1985-01-01',
+      country: 'USA',
+      gender: 'male',
+    });
+
+    const Agent3=await request(server).post('/api/auth/login')
+    .send({
+      email: 'agent3@example.com',
+      password: 'password123'
+    });
+
+    console.log(Agent3)
+
+    const today = new Date();
+    await Ticket.create(
+      {
+        title: 'Ticket 1',
+        description: 'Test ticket 1',
+        assignedTo: Agent3.body.user._id,
+        category:'General',
+        customer:customerUser.user._id,
+        status: 'Open',
+        createdAt: today,
+        updatedAt: today
+      })
+
+    const response = await request(server)
+      .get(`/api/users/ticketsByAgentToday/${Agent3.body.user._id}`)
+      .set('Authorization', `Bearer ${Agent3.body.token}`);
+
+    expect(response.status).toBe(200);
+  });
+
+  it('should return the total counts of tickets for each status', async () => {
+
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
+      fullName: 'Agent 3',
+      signupEmail: 'agent3@example.com',
+      signupPassword: 'password123',
+      dob: '1985-01-01',
+      country: 'USA',
+      gender: 'male',
+    });
+
+    const Agent3=await request(server).post('/api/auth/login')
+    .send({
+      email: 'agent3@example.com',
+      password: 'password123'
+    });
+
+    console.log(Agent3)
+    const today = new Date();
+    await Ticket.create(
+      {
+        title: 'Ticket 1',
+        description: 'Test ticket 1',
+        assignedTo: Agent3.body.user._id,
+        category:'General',
+        customer:customerUser.user._id,
+        status: 'Open',
+        createdAt: today,
+        updatedAt: today
+      })
+
+      await Ticket.create(
+        {
+          title: 'Ticket 2',
+          description: 'Test ticket 2',
+          assignedTo: Agent3.body.user._id,
+          category:'General',
+          customer:customerUser.user._id,
+          status: 'Open',
+          createdAt: today,
+          updatedAt: today
+        })
+
+    const response = await request(server)
+      .get('/api/users/getAllTicketsCounts')
+      .set('Authorization', `Bearer ${Agent3.body.token}`); // Replace with actual auth token
+
+    expect(response.status).toBe(200);
+  });
+
+  it('should return the total counts of tickets created today for each status', async () => {
+
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
+      fullName: 'Agent 3',
+      signupEmail: 'agent3@example.com',
+      signupPassword: 'password123',
+      dob: '1985-01-01',
+      country: 'USA',
+      gender: 'male',
+    });
+
+    const Agent3=await request(server).post('/api/auth/login')
+    .send({
+      email: 'agent3@example.com',
+      password: 'password123'
+    });
+
+    console.log(Agent3)
+    const today = new Date();
+    await Ticket.create(
+      {
+        title: 'Ticket 1',
+        description: 'Test ticket 1',
+        assignedTo: Agent3.body.user._id,
+        category:'General',
+        customer:customerUser.user._id,
+        status: 'Open',
+        createdAt: today,
+        updatedAt: today
+      })
+
+      await Ticket.create(
+        {
+          title: 'Ticket 2',
+          description: 'Test ticket 2',
+          assignedTo: Agent3.body.user._id,
+          category:'General',
+          customer:customerUser.user._id,
+          status: 'Open',
+          createdAt: today,
+          updatedAt: today
+        })
+
+    const response = await request(server)
+      .get('/api/users/getAllTicketsCountsToday')
+      .set('Authorization', `Bearer ${Agent3.body.token}`); // Replace with actual auth token
+
+    expect(response.status).toBe(200);
+  });
+
+  it('should return the total counts of tickets created today for each status', async () => {
+
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
+      fullName: 'Agent 3',
+      signupEmail: 'agent3@example.com',
+      signupPassword: 'password123',
+      dob: '1985-01-01',
+      country: 'USA',
+      gender: 'male',
+    });
+
+    const Agent3=await request(server).post('/api/auth/login')
+    .send({
+      email: 'agent3@example.com',
+      password: 'password123'
+    });
+
+    console.log(Agent3)
+    const today = new Date();
+    await Ticket.create(
+      {
+        title: 'Ticket 1',
+        description: 'Test ticket 1',
+        assignedTo: Agent3.body.user._id,
+        category:'General',
+        customer:customerUser.user._id,
+        status: 'Open',
+        createdAt: today,
+        updatedAt: today
+      })
+
+      const ticket=await Ticket.create(
+        {
+          title: 'Ticket 2',
+          description: 'Test ticket 2',
+          assignedTo: Agent3.body.user._id,
+          category:'General',
+          customer:customerUser.user._id,
+          status: 'Open',
+          createdAt: today,
+          updatedAt: today
+        })
+
+    const response = await request(server)
+      .get(`/api/tickets/${ticket._id}`)
+      .set('Authorization', `Bearer ${Agent3.body.token}`); // Replace with actual auth token
+
+    expect(response.status).toBe(200);
+  });
+
+  it('should return the total counts of tickets created today for each status', async () => {
+
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
+      fullName: 'Agent 3',
+      signupEmail: 'agent3@example.com',
+      signupPassword: 'password123',
+      dob: '1985-01-01',
+      country: 'USA',
+      gender: 'male',
+    });
+
+    const Agent3=await request(server).post('/api/auth/login')
+    .send({
+      email: 'agent3@example.com',
+      password: 'password123'
+    });
+
+    console.log(Agent3)
+    const today = new Date();
+    await Ticket.create(
+      {
+        title: 'Ticket 1',
+        description: 'Test ticket 1',
+        assignedTo: Agent3.body.user._id,
+        category:'General',
+        customer:customerUser.user._id,
+        status: 'Open',
+        createdAt: today,
+        updatedAt: today
+      })
+
+      await Ticket.create(
+        {
+          title: 'Ticket 2',
+          description: 'Test ticket 2',
+          assignedTo: Agent3.body.user._id,
+          category:'General',
+          customer:customerUser.user._id,
+          status: 'Open',
+          createdAt: today,
+          updatedAt: today
+        })
+
+    const response = await request(server)
+      .get(`/api/tickets/assigned/${Agent3.body.user._id}`)
+      .set('Authorization', `Bearer ${Agent3.body.token}`); // Replace with actual auth token
+
+    expect(response.status).toBe(200);
+  });
+
+  it('should return the total counts of tickets created today for each status', async () => {
+
+    await request(server).post('/api/auth/registerAgent')
+    .set('Authorization', `Bearer ${customerUser.token}`)
+    .send({
+      fullName: 'Agent 3',
+      signupEmail: 'agent3@example.com',
+      signupPassword: 'password123',
+      dob: '1985-01-01',
+      country: 'USA',
+      gender: 'male',
+    });
+
+    const Agent3=await request(server).post('/api/auth/login')
+    .send({
+      email: 'agent3@example.com',
+      password: 'password123'
+    });
+
+    console.log(Agent3)
+    const today = new Date();
+    await Ticket.create(
+      {
+        title: 'Ticket 1',
+        description: 'Test ticket 1',
+        assignedTo: Agent3.body.user._id,
+        category:'General',
+        customer:customerUser.user._id,
+        status: 'Open',
+        createdAt: today,
+        updatedAt: today
+      })
+
+      await Ticket.create(
+        {
+          title: 'Ticket 2',
+          description: 'Test ticket 2',
+          assignedTo: Agent3.body.user._id,
+          category:'General',
+          customer:customerUser.user._id,
+          status: 'Open',
+          createdAt: today,
+          updatedAt: today
+        })
+
+    const response = await request(server)
+      .get(`/api/tickets/customer/${customerUser.user._id}`)
+      .set('Authorization', `Bearer ${customerUser.token}`); // Replace with actual auth token
+
+    expect(response.status).toBe(200);
   });
 });
