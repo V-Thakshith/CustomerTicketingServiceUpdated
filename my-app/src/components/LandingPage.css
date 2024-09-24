@@ -1,62 +1,120 @@
-.header {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    position: relative;
-    gap: 40px;
-}
-
-/* Full page container */
+/* /* Full page container */
 .landing-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #fff; /* White background */
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    min-height: 100vh;
+    background-color: #f0f2f5; /* Soft background */
+    padding: 7%; /* Added padding for better spacing */
 }
 
+.landing-content .para1{
+    align-items: center;
+}
+ 
+/* Flexbox container for image and content */
+.landing-flex {
+    display: flex;
+    align-items: center; /* Align items vertically centered */
+    justify-content: center; /* Center items horizontally */
+    gap: 60px; /* Increased space between image and content */
+}
+ 
 /* Image styling */
 .landing-image {
-    width: 50%; /* Adjust the width as needed */
+    width: 60%; /* Increase width to 60% */
+    max-width: 600px; /* Set max width to avoid too large images */
     height: auto;
-    display: block;
+    border-radius: 15px; /* Rounded corners for the image */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Enhanced depth */
 }
-
+ 
 /* Content wrapper (card) */
 .landing-content {
-    width: 35%; /* Adjust based on your design */
+    width: 40%; /* Adjust based on your design */
     height: auto;
-    text-align: center;
+    text-align: left; /* Align text to the left */
     background: #007bff; /* Blue background */
-    padding: 5%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
+    padding: 60px; /* Increased padding */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
     color: #fff; /* White text for contrast */
 }
-
-/* Other styles remain the same */
-
+ 
+/* Main heading styling */
+.main-heading {
+    font-size: 3rem; /* Increased font size */
+    margin-bottom: 20px;
+    text-align: center; /* Center align the heading */
+}
+ 
+/* Button section styling */
+.button-section {
+    margin-top: 20px;
+    display: flex; /* Use flex to align buttons */
+    justify-content: center; /* Center buttons */
+}
+ 
 /* Button styling */
 .landing-button {
     background-color: #fff;
     color: #007bff;
-    padding: 12px 25px;
+    padding: 12px 20px;
     border: none;
-    border-radius: 50px;
+    border-radius: 25px; /* More rounded buttons */
     cursor: pointer;
-    margin: 0 15px;
+    margin: 0 10px; /* Adjust margin for spacing */
     font-size: 1rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    width: auto; /* Fixed width for buttons */
 }
-
+ 
 .landing-button:hover {
-    background-color: #e0e0e0;
+    background-color: #e0e0e0; /* Lighten on hover */
     color: #0056b3;
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+ 
+/* Style for About Us and Contact Us sections */
+.info-section {
+    padding: 40px 20px;
+    background-color: #f9f9f9; /* Light grey background */
+    margin-top: 30px;
+    border-radius: 10px; /* Rounded corners */
+    width: 80%; /* Width of the sections */
+    max-width: 800px; /* Max width to maintain readability */
+    text-align: left; /* Align text to the left */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Add depth */
+    opacity: 0; /* Initially hidden */
+    transform: translateY(30px); /* Slightly translate down */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* Transition for smooth reveal */
+}
+ 
+/* Fade in effect when visible */
+.landing-container.scrolled .info-section {
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* Original position */
+}
+ 
+#about-us {
+    background-color: #e3f2fd; /* Light blue for About Us */
+}
+ 
+#contact-us {
+    background-color: #e1f5fe; /* Even lighter blue for Contact Us */
+}
+ 
+.info-section h2 {
+    font-size: 2.2rem; /* Increased heading size */
+    margin-bottom: 15px;
+    color: #007bff; /* Blue color for section headings */
+}
+ 
+.info-section p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333; /* Dark grey for better readability */
 }
