@@ -39,6 +39,14 @@
     border-radius: 15px; /* Rounded corners */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
     color: #fff; /* White text for contrast */
+    transition: all 0.3s ease;
+}
+
+.landing-content:hover{
+    background-color: #007bff;
+    color: #ffffff;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* Other styles remain the same */
