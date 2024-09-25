@@ -131,6 +131,16 @@ const Login = () => {
 
     return (
         <div className="login-container">
+            <header className="headeremp">
+                <h1>Teleassist</h1>
+                <nav className="navbaremp">
+                    <ul>
+                        <li>
+                            <button className="nav-buttonemp" onClick={handleEmployeeRedirect}>Employee Login</button>
+                        </li>
+                    </ul>
+                </nav>
+            </header>
             <div className="company-details">
                 <h1>Welcome to Teleassist</h1>
                 <p>Manage all your Teleassist services with ease.</p>
@@ -166,14 +176,6 @@ const Login = () => {
                     <div className="sign-up-link">
                         <a href="#signup" onClick={() => setShowPopup(true)}>Sign Up</a>
                     </div>
-                </div>
-
-                {/* Right box: Employee Login */}
-                <div className="box right-box">
-                    <h2>Employee Login</h2>
-                    <button onClick={handleEmployeeRedirect} className="login-button">
-                        Go to Employee Login
-                    </button>
                 </div>
             </div>
 

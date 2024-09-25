@@ -7,16 +7,16 @@ const Ticket = require('../models/Ticket');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/jwtConfig');
-
+ 
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-
+ 
     const hashedPassword = await bcrypt.hash("password123", 10);
-
+ 
     const DefaultManager = new Manager({
       name: "Bhuvan Reddy Sagar",
       email: "vadluribhuvansagar.reddy@gmail.com",
@@ -25,7 +25,7 @@ const connectDB = async () => {
       dob: "2002-06-15",
       country: "India"
     });
-
+ 
     const DefaultAgent = new Agent({
       name: "Salaj Saxena",
       email: "salaj.saxena@gmail.com",
@@ -34,7 +34,7 @@ const connectDB = async () => {
       dob: "2002-06-15",
       country: "India"
     });
-
+ 
     const DefaultCustomer = new Customer({
       name: "Vaishnavi B",
       email: "vaishnavib.goudar@gmail.com",
@@ -43,7 +43,7 @@ const connectDB = async () => {
       dob: "2001-06-16",
       country: "India"
     });
-
+ 
     // Save Manager and handle duplicate key errors
     try {
       await DefaultManager.save();
@@ -54,7 +54,7 @@ const connectDB = async () => {
         console.error('Error creating Manager:', err);
       }
     }
-
+ 
     // Save Agent and handle duplicate key errors
     let defaultAgent;
     try {
@@ -68,7 +68,7 @@ const connectDB = async () => {
         console.error('Error creating Agent:', err);
       }
     }
-
+ 
     // Save Customer and handle duplicate key errors
     let defaultCustomer;
     try {
@@ -82,12 +82,12 @@ const connectDB = async () => {
         console.error('Error creating Customer:', err);
       }
     }
-
+ 
     console.log('MongoDB connected');
   } catch (err) {
     console.error(err.message);
     process.exit(1);
   }
 };
-
+ 
 module.exports = connectDB;

@@ -128,18 +128,22 @@ const Dashboard = () => {
         sessionStorage.clear();
         navigate('/');
     };
+
+    const resolvedTickets = tickets.filter(ticket => ticket.status === 'Resolved');
  
     return (
         <div className="dashboard-container1">
            
     <div className="sidebar1">
         <div className="logo">Teleassist</div>
-        <nav className="nav-menu">
-            <a href="#home">Home</a>
-            <a href="#tickets">Tickets</a>
-            <a href="#reports">Reports</a>
-            <a href="#settings">Settings</a>
-        </nav>
+        <ul className="nav-list">
+        <li className="nav-item">
+              <a className="nav-link" href="#tickets">All Tickets</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="#reports">Resolved Tickets</a>
+            </li>
+        </ul>
     </div>
  
     <main className="main-content1">
@@ -166,7 +170,12 @@ const Dashboard = () => {
                 Raise Ticket
             </button>
         </div>
-        <div id="tickets" className="table-container">
+
+        <div id="tickets" className="card">
+        <div className="card-header">
+            <h5>All Tickets</h5>
+          </div>
+          <br></br>
                 <table className="info-table">
                     <thead>
                         <tr>
@@ -202,6 +211,40 @@ const Dashboard = () => {
                     </tbody>
                 </table>
                 </div>
+                <div id="reports" className="card">
+          <div className="card-header">
+            <h5>Resolved Tickets</h5>
+          </div>
+          <br />
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Ticket Number</th>
+                  <th>Subject</th>
+                  <th>Category</th>
+                  <th>Date Resolved</th>
+                </tr>
+              </thead>
+              <tbody>
+                {resolvedTickets.length > 0 ? (
+                  resolvedTickets.map(ticket => (
+                    <tr key={ticket._id}>
+                      <td>{ticket._id}</td>
+                      <td>{ticket.title}</td>
+                      <td>{ticket.category}</td>
+                      <td>{new Date(ticket.updatedAt).toLocaleDateString('en-US')}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5">No resolved tickets</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
             </main>
  
             {/* Pop-up for Raise Ticket */}
@@ -264,6 +307,7 @@ const Dashboard = () => {
                 </div>
             )}
         </div>
+        
     );
 };
  

@@ -59,6 +59,21 @@ const LandingPage = () => {
                 <p>Email: support@teleassist.com</p>
                 <p>Phone: +123-456-7890</p>
             </div>
+            <footer className="footerl">
+                <div className="footerl-content">
+                    <p>&copy; 2024 Teleassist. All rights reserved.</p>
+                    <div className="footerl-links">
+                        <a href="/privacy-policy">Privacy Policy</a>
+                        <a href="/terms-of-service">Terms of Service</a>
+                        <a href="/Community">Community</a>
+                    </div>
+                    <div className="social-links">
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 };

@@ -13,7 +13,15 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     width: 350px;
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition */
 }
+
+/* Hover effect */
+.login-form:hover {
+    transform: translateY(-5px); /* Slightly raise the form */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); /* Increase shadow on hover */
+}
+
 
 .login-form h2 {
     margin-bottom: 20px;

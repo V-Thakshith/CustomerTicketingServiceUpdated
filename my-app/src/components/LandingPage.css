@@ -119,3 +119,63 @@
     line-height: 1.6;
     color: #333; /* Dark grey for better readability */
 }
+
+/* Footer Styles */
+.footerl {
+    background-color: #007bff; /* Match the blue theme */
+    color: #ffffff; /* White text for contrast */
+    padding: 10px 0; /* Reduced padding */
+    text-align: center;
+    width: 100%; /* Full width footerl */
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin-top: 4%; /* Adjusted space above footerl */
+    border-radius:15px;
+}
+ 
+.footerl-content {
+    max-width: 1200px; /* Limit content width */
+    margin: 0 auto; /* Center content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+ 
+.footerl-links {
+    margin: 5px 0; /* Reduced margin */
+}
+ 
+.footerl-links a {
+    margin: 0 10px; /* Reduced space between links */
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.9rem; /* Reduced font size */
+}
+ 
+.footerl-links a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+ 
+.social-links {
+    margin-top: 5px; /* Reduced top margin */
+}
+ 
+.social-links a {
+    margin: 0 8px; /* Slightly reduced space between social links */
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1rem; /* Reduced font size */
+}
+ 
+.social-links a:hover {
+    color: #cce5ff; /* Light blue on hover */
+}
+ 
+/* Media Queries for Footer */
+@media (max-width: 768px) {
+    .footerl-links a,
+    .social-links a {
+        display: block;
+        margin: 3px 0; /* Reduced margins for small screens */
+    }
+}

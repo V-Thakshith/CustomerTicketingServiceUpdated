@@ -25,6 +25,7 @@ body {
 }
 
 .company-details {
+    padding-top: 5%;
     text-align: center;
     margin-bottom: 30px;
     animation: slideIn 1s ease-out;
@@ -68,10 +69,12 @@ body {
 /* Box Container */
 .login-boxes {
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* Centers the left-box horizontally */
+    align-items: center; /* Centers the left-box vertically */
     width: 100%;
-    max-width: 1200px;
+    max-width: 800px;
     margin-top: 20px;
+    min-height: 70vh; /* Ensure it takes a minimum height */
 }
 
 .box {
@@ -95,6 +98,7 @@ body {
 
 .left-box, .right-box {
     max-width: 500px;
+    width: 100%;
 }
 
 h2 {
@@ -287,4 +291,53 @@ h2:hover {
     .popup {
         width: 90%;
     }
+}
+
+.headeremp {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed; /* Fix the header to the top */
+    top: 0; /* Position at the very top */
+    left: 0; /* Align to the left edge */
+    right: 0; /* Align to the right edge */
+    z-index: 1000; /* Ensure it stays on top of other content */
+}
+
+.headeremp h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.navbaremp {
+    display: flex;
+}
+
+.navbaremp ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.navbaremp li {
+    margin-left: 20px; /* Space between navigation items */
+}
+
+.nav-buttonemp {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.nav-buttonemp:hover {
+    background-color: #0056b3;
 }
