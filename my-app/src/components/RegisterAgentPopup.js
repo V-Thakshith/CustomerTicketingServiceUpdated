@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 // import api from '../api'; // Ensure this points to your API setup
 import './RegisterAgentPopup.css'; // Import CSS for styling
 import api from'../apiForManager';
-
-const RegisterAgentPopup = ({ onClose }) => {
+ 
+const RegisterAgentPopup = ({ handleClose }) => {
   const [agentData, setAgentData] = useState({
     fullName: '', // Use fullName as expected by the API
     signupEmail: '', // Use signupEmail
@@ -15,9 +15,9 @@ const RegisterAgentPopup = ({ onClose }) => {
     country: ''
   });
   const [errorMessage, setErrorMessage] = useState('');
-
+ 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
-
+ 
   const validatePassword = (pwd) => {
     if (pwd.length < 8) return 'Password must be at least 8 characters long';
     if (!/[A-Z]/.test(pwd)) return 'Password must contain at least one uppercase letter';
@@ -26,58 +26,57 @@ const RegisterAgentPopup = ({ onClose }) => {
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(pwd)) return 'Password must contain at least one special character';
     return '';
   };
-
+ 
   const handleRegister = async (e) => {
     e.preventDefault();
     setErrorMessage('');
-
+ 
     // Name validation: At least 3 characters
     if (agentData.fullName.length < 3) {
       setErrorMessage('Name must be at least 3 characters long.');
       return;
     }
-
+ 
     if (!validateEmail(agentData.signupEmail)) {
       setErrorMessage('Please enter a valid email address.');
       return;
     }
-
+ 
     const passwordError = validatePassword(agentData.signupPassword);
     if (passwordError) {
       setErrorMessage(passwordError);
       return;
     }
-
+ 
     if (agentData.signupPassword !== agentData.confirmPassword) {
       setErrorMessage('Passwords do not match.');
       return;
     }
-
+ 
     // Date validation: Age should be at least 18 years
     const today = new Date();
     const birthDate = new Date(agentData.dob);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDifference = today.getMonth() - birthDate.getMonth();
-
+ 
     if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-
+ 
     if (age < 18) {
       setErrorMessage('You must be at least 18 years old to register.');
       return;
     }
-
+ 
     try {
       const { data } = await api.post('/auth/registerAgent', agentData); // Post data to the correct endpoint
       alert('Agent registered successfully!');
-      onClose(); // Close the popup
+      handleClose(); // Close the popup
     } catch (error) {
-      setErrorMessage('Failed to register agent.');
       console.error('Error registering agent:', error);
     }
   };
-
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setAgentData({
@@ -85,11 +84,11 @@ const RegisterAgentPopup = ({ onClose }) => {
       [name]: value
     });
   };
-
+ 
   return (
     <div className="popup-overlay">
       <div className="popup-content">
-        <button className="close-button" onClick={onClose}>X</button>
+        <button className="close-button" onClick={handleClose}>X</button>
         <h2>Register Agent</h2>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <form onSubmit={handleRegister}>
@@ -180,5 +179,7 @@ const RegisterAgentPopup = ({ onClose }) => {
     </div>
   );
 };
-
+ 
 export default RegisterAgentPopup;
+ 
+ 
