@@ -163,9 +163,6 @@ const Login = () => {
                         </div>
                         <button type="submit" className="login-button">Login</button>
                     </form>
-                    <p className="forgot-password">
-                        <a href="#forgot-password">Forgot Password?</a>
-                    </p>
                     <div className="sign-up-link">
                         <a href="#signup" onClick={() => setShowPopup(true)}>Sign Up</a>
                     </div>
