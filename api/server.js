@@ -7,7 +7,7 @@ require('dotenv').config();
 const app = express();
 
 const corsOptions = {
-    origin: 'http://3.89.73.86:3000', // Replace with the URL of your frontend application
+    origin: 'http://54.145.172.167:3000', // Replace with the URL of your frontend application
     credentials: true // Allow credentials (cookies, authorization headers, etc.)
 };
 
