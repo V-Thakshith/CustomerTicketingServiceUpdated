@@ -230,7 +230,12 @@ exports.createTicket = async (req, res) => {
     const { title, description, customerId, category } = req.body;
 
     // Handle attachments, if any
-    const attachments = req.files ? req.files.map(file => file.path.replace('uploads/', '')) : [];
+    let attachments = [];
+    if (req.files && req.files.length > 0) {
+      attachments = req.files.map(file => {
+        return file.path ? file.path : file.location; 
+      });
+    }
 
     // Validate input: Check if required fields are missing
     if (!title || !description || !customerId) {
