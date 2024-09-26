@@ -64,7 +64,7 @@ const TicketModal = ({ ticket, handleCloseModal:onClose, onAction }) => {
                 {ticket.attachments.map((attachment, index) => (
                   <div key={index} className="attachment-item">
                     <img 
-                      src={`http://54.145.172.167:5000/${attachment}`} 
+                      src={`http://44.212.251.194:5000/${attachment}`} 
                       alt={`Attachment ${index + 1}`} 
                       className="attachment-image" 
                     />
